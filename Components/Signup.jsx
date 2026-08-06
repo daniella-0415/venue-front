@@ -3,13 +3,11 @@ import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { app } from '../firebase';
 import "./Signup.css"; 
 
-
 function Signup() {
-    const [name, setName] = useState(''); 
-    const [surname, setSurname] = useState(''); 
+    const [fullName, setFullName] = useState(''); 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('Customer'); 
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [loginError, setLoginError] = useState('');
 
     const auth = getAuth(app);
@@ -17,6 +15,11 @@ function Signup() {
     const HandleSignup = async (e) => {
         e.preventDefault();
         setLoginError('');
+
+        if (password !== confirmPassword) {
+            setLoginError("Passwords do not match.");
+            return;
+        }
 
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -29,9 +32,9 @@ function Signup() {
                 },
                 body: JSON.stringify({
                     firebaseUID: firebaseUser.uid, 
-                    name: `${name} ${surname}`.trim(),
+                    name: fullName.trim(),
                     email: email,
-                    role: role
+                    role: "Customer" 
                 }),
             });
 
@@ -41,12 +44,11 @@ function Signup() {
                 throw new Error(data.message || 'Failed to sync account profile to database.');
             }
 
-            alert("Account registered and synchronized with database successfully!");
-            
-            setName('');
-            setSurname('');
+            alert("Account registered and synchronized successfully!");
+            setFullName('');
             setEmail('');
             setPassword('');
+            setConfirmPassword('');
         }
         catch (error) {
             setLoginError(error.message);
@@ -54,81 +56,102 @@ function Signup() {
     };
 
     return (
-        <div className="container">
-            <div className="card">
-                <div className="header">
-                    <h2 className="title">Welcome to venue flow</h2>
-                    <p className="subtitle">Your next unforgettable event starts here<br />sign in to begin</p>
+        <div className="signup-page-container">
+            <div className="signup-wrapper">
+                
+                <div className="banner-side">
+                    <div className="banner-overlay"></div>
+                    <div className="banner-content">
+                        <h1 className="banner-title">Create Your<br />Account</h1>
+                        <p className="banner-subtitle">Join us and discover amazing events tailored for you.</p>
+                    </div>
+                    
+                    <div className="floating-badge">
+                        <div className="badge-avatar"></div>
+                        <div className="badge-text">
+                            <strong>Be part of the experience.</strong>
+                            <span>Create your account and never miss out.</span>
+                        </div>
+                    </div>
                 </div>
 
-                <form onSubmit={HandleSignup} className="form">
-                    <div className="formGroup">
-                        <label className="label">Name</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                            className="input"
-                        />
+                <div className="form-side">
+                    <div className="form-header">
+                        <div className="avatar-circle"></div>
+                        <div className="header-text-block">
+                            <h3>Join Us</h3>
+                            <p>It's quick and easy</p>
+                        </div>
                     </div>
 
-                    <div className="formGroup">
-                        <label className="label">Surname</label>
-                        <input
-                            type="text"
-                            value={surname}
-                            onChange={(e) => setSurname(e.target.value)}
-                            required
-                            className="input"
-                        />
-                    </div>
+                    <form onSubmit={HandleSignup} className="actual-form">
+                        
+                        <div className="input-group">
+                            <label>Full Name</label>
+                            <div className="input-with-icon">
+                                <span className="field-icon"></span>
+                                <input
+                                    type="text"
+                                    placeholder="Enter your full name"
+                                    value={fullName}
+                                    onChange={(e) => setFullName(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                    <div className="formGroup">
-                        <label className="label">Email</label>
-                        <input
-                            type="email"
-                            placeholder="Enter your email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="input"
-                        />
-                    </div>
+                        <div className="input-group">
+                            <label>Email</label>
+                            <div className="input-with-icon">
+                                <span className="field-icon"></span>
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                    <div className="formGroup">
-                        <label className="label">Password</label>
-                        <input
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="input"
-                        />
-                    </div>
+                        <div className="input-group">
+                            <label>Password</label>
+                            <div className="input-with-icon">
+                                <span className="field-icon"></span>
+                                <input
+                                    type="password"
+                                    placeholder="Create your password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                    <div className="formGroup">
-                        <label className="label">Account Role</label>
-                        <select 
-                            value={role} 
-                            onChange={(e) => setRole(e.target.value)}
-                            className="input"
-                        >
-                            <option value="Customer">Customer</option>
-                            <option value="Venue Manager">Venue Manager</option>
-                            <option value="Administrator">Administrator</option>
-                        </select>
-                    </div>
+                        <div className="input-group">
+                            <label>Confirm Password</label>
+                            <div className="input-with-icon">
+                                <span className="field-icon"></span>
+                                <input
+                                    type="password"
+                                    placeholder="Create your password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                    {loginError && <p className="error">{loginError}</p>}
+                        {loginError && <p className="error-message-box">{loginError}</p>}
 
-                    <button type="submit" className="button">Sign Up</button>
-                </form>
+                        <button type="submit" className="submit-action-btn">Sign Up</button>
+                    </form>
 
-                <p className="footerText">
-                    Already have an account? <span className="link">Log In</span>
-                </p>
+                    <p className="redirect-footer">
+                        Already have an account? <span className="highlight-link">Log in</span>
+                    </p>
+                </div>
+
             </div>
         </div>
     );
