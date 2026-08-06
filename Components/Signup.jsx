@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { app } from '../firebase';
 import "./Signup.css"; 
 
-function Signup() {
+const auth = getAuth(app);
+
+function Signup({ onNavigate }) {
     const [fullName, setFullName] = useState(''); 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loginError, setLoginError] = useState('');
-
-    const auth = getAuth(app);
+    const [isLoading, setIsLoading] = useState(false);
 
     const HandleSignup = async (e) => {
         e.preventDefault();
@@ -21,9 +22,13 @@ function Signup() {
             return;
         }
 
+        setIsLoading(true);
+
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const firebaseUser = userCredential.user;
+
+            const idToken = await firebaseUser.getIdToken();
 
             const response = await fetch('http://localhost:3000/api/register', {
                 method: 'POST',
@@ -31,7 +36,7 @@ function Signup() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    firebaseUID: firebaseUser.uid, 
+                    idToken: idToken,
                     name: fullName.trim(),
                     email: email,
                     role: "Customer" 
@@ -45,13 +50,19 @@ function Signup() {
             }
 
             alert("Account registered and synchronized successfully!");
+            
+            // Clean out old strings
             setFullName('');
             setEmail('');
             setPassword('');
             setConfirmPassword('');
+            
+            onNavigate();
         }
         catch (error) {
             setLoginError(error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -96,6 +107,7 @@ function Signup() {
                                     value={fullName}
                                     onChange={(e) => setFullName(e.target.value)}
                                     required
+                                    disabled={isLoading}
                                 />
                             </div>
                         </div>
@@ -110,6 +122,7 @@ function Signup() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
+                                    disabled={isLoading}
                                 />
                             </div>
                         </div>
@@ -124,6 +137,8 @@ function Signup() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
+                                    disabled={isLoading}
+                                    minLength={6}
                                 />
                             </div>
                         </div>
@@ -138,17 +153,23 @@ function Signup() {
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     required
+                                    disabled={isLoading}
                                 />
                             </div>
                         </div>
 
                         {loginError && <p className="error-message-box">{loginError}</p>}
 
-                        <button type="submit" className="submit-action-btn">Sign Up</button>
+                        <button type="submit" className="submit-action-btn" disabled={isLoading}>
+                            {isLoading ? 'Creating Account...' : 'Sign Up'}
+                        </button>
                     </form>
 
                     <p className="redirect-footer">
-                        Already have an account? <span className="highlight-link">Log in</span>
+                        Already have an account?{' '}
+                        <span className="highlight-link" onClick={onNavigate} style={{ cursor: 'pointer' }}>
+                            Log in
+                        </span>
                     </p>
                 </div>
 

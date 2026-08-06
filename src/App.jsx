@@ -1,10 +1,18 @@
-import React from 'react';
+import { useState } from 'react';
 import Signup from "../Components/Signup";
+import Login from "../Components/Login";
 import "./index.css"; 
+
 function App() {
+  const [currentView, setCurrentView] = useState('login'); 
+
   return (
     <div className="App">
-      <Signup />
+      {currentView === 'login' ? (
+        <Login onNavigate={() => setCurrentView('signup')} />
+      ) : (
+        <Signup onNavigate={() => setCurrentView('login')} />
+      )}
     </div>
   );
 }
