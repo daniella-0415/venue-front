@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import Signup from "../Components/Signup";
-import Login from "../Components/Login";
+// Changed "../" to "./" because Components is in the same src folder as App.jsx
+import Signup from "./Components/Signup";
+import Login from "./Components/Login";
 import "./index.css"; 
 
 function App() {

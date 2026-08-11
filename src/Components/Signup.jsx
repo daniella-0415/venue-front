@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { app } from '../../firebase';
+import { app } from '../firebase';
 import "./Signup.css"; 
 
 const auth = getAuth(app);
@@ -51,7 +51,6 @@ function Signup({ onNavigate }) {
 
             alert("Account registered and synchronized successfully!");
             
-            // Clean out old strings
             setFullName('');
             setEmail('');
             setPassword('');
@@ -60,7 +59,8 @@ function Signup({ onNavigate }) {
             onNavigate();
         }
         catch (error) {
-            setLoginError(error.message);
+            const friendlyMessage = error.message.replace('Firebase: ', '');
+            setLoginError(friendlyMessage);
         } finally {
             setIsLoading(false);
         }
@@ -90,8 +90,8 @@ function Signup({ onNavigate }) {
                     <div className="form-header">
                         <div className="avatar-circle"></div>
                         <div className="header-text-block">
-                            <h3>Join Us</h3>
-                            <p>It's quick and easy</p>
+                            <h3>Sign Up</h3>
+                            <p>Enter your details to register</p>
                         </div>
                     </div>
 
@@ -101,27 +101,27 @@ function Signup({ onNavigate }) {
                             <label>Full Name</label>
                             <div className="input-with-icon">
                                 <span className="field-icon"></span>
-                                <input
-                                    type="text"
+                                <input 
+                                    type="text" 
                                     placeholder="Enter your full name"
-                                    value={fullName}
-                                    onChange={(e) => setFullName(e.target.value)}
-                                    required
+                                    value={fullName} 
+                                    onChange={(e) => setFullName(e.target.value)} 
+                                    required 
                                     disabled={isLoading}
                                 />
                             </div>
                         </div>
 
                         <div className="input-group">
-                            <label>Email</label>
+                            <label>Email Address</label>
                             <div className="input-with-icon">
                                 <span className="field-icon"></span>
-                                <input
-                                    type="email"
+                                <input 
+                                    type="email" 
                                     placeholder="Enter your email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
+                                    value={email} 
+                                    onChange={(e) => setEmail(e.target.value)} 
+                                    required 
                                     disabled={isLoading}
                                 />
                             </div>
@@ -131,14 +131,13 @@ function Signup({ onNavigate }) {
                             <label>Password</label>
                             <div className="input-with-icon">
                                 <span className="field-icon"></span>
-                                <input
-                                    type="password"
-                                    placeholder="Create your password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
+                                <input 
+                                    type="password" 
+                                    placeholder="Create a password"
+                                    value={password} 
+                                    onChange={(e) => setPassword(e.target.value)} 
+                                    required 
                                     disabled={isLoading}
-                                    minLength={6}
                                 />
                             </div>
                         </div>
@@ -147,19 +146,19 @@ function Signup({ onNavigate }) {
                             <label>Confirm Password</label>
                             <div className="input-with-icon">
                                 <span className="field-icon"></span>
-                                <input
-                                    type="password"
-                                    placeholder="Create your password"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    required
+                                <input 
+                                    type="password" 
+                                    placeholder="Confirm your password"
+                                    value={confirmPassword} 
+                                    onChange={(e) => setConfirmPassword(e.target.value)} 
+                                    required 
                                     disabled={isLoading}
                                 />
                             </div>
                         </div>
 
                         {loginError && <p className="error-message-box">{loginError}</p>}
-
+                        
                         <button type="submit" className="submit-action-btn" disabled={isLoading}>
                             {isLoading ? 'Creating Account...' : 'Sign Up'}
                         </button>
@@ -167,8 +166,8 @@ function Signup({ onNavigate }) {
 
                     <p className="redirect-footer">
                         Already have an account?{' '}
-                        <span className="highlight-link" onClick={onNavigate} style={{ cursor: 'pointer' }}>
-                            Log in
+                        <span className="highlight-link" onClick={onNavigate}>
+                            Sign in
                         </span>
                     </p>
                 </div>
