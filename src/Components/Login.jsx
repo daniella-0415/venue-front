@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+// Fixed path: points directly to the src/firebase.js file relative to the Components folder
 import { app } from '../firebase';
 import './Login.css'; 
 
@@ -41,7 +42,9 @@ const Login = ({ onNavigate }) => {
 
             alert("Logged in successfully!");
         } catch (error) {
-            setLoginError(error.message);
+            // Strips Firebase prefix error headers for user-friendly UI display
+            const friendlyMessage = error.message.replace('Firebase: ', '');
+            setLoginError(friendlyMessage);
         } finally {
             setIsLoading(false);
         }
