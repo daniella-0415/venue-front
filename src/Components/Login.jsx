@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from 'react';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 // Fixed path: points directly to the src/firebase.js file relative to the Components folder
@@ -11,25 +12,48 @@ const Login = ({ onNavigate }) => {
     const [password, setPassword] = useState('');
     const [loginError, setLoginError] = useState('');
     const [isLoading, setIsLoading] = useState(false); 
+=======
+import './Login.css'
+import { useState } from 'react';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { app } from '../firebase';
+
+const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loginError, setLoginError] = useState('');
+
+    const auth = getAuth(app);
+>>>>>>> 3ba936c (I only moved the components folder into the src folder. It shouldn't be outside in the first place)
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoginError('');
+<<<<<<< HEAD
         setIsLoading(true); 
+=======
+>>>>>>> 3ba936c (I only moved the components folder into the src folder. It shouldn't be outside in the first place)
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const firebaseUser = userCredential.user;
 
+<<<<<<< HEAD
             const idToken = await firebaseUser.getIdToken();
 
+=======
+>>>>>>> 3ba936c (I only moved the components folder into the src folder. It shouldn't be outside in the first place)
             const response = await fetch('http://localhost:3000/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+<<<<<<< HEAD
                     idToken: idToken,
+=======
+                    firebaseUID: firebaseUser.uid,
+>>>>>>> 3ba936c (I only moved the components folder into the src folder. It shouldn't be outside in the first place)
                     email: email,
                 }),
             });
@@ -42,6 +66,7 @@ const Login = ({ onNavigate }) => {
 
             alert("Logged in successfully!");
         } catch (error) {
+<<<<<<< HEAD
             // Strips Firebase prefix error headers for user-friendly UI display
             const friendlyMessage = error.message.replace('Firebase: ', '');
             setLoginError(friendlyMessage);
@@ -132,3 +157,38 @@ const Login = ({ onNavigate }) => {
 }
 
 export default Login;
+=======
+            setLoginError(error.message);
+        }
+    };
+
+    return ( 
+        <div className="LoginDiv">
+            <form onSubmit={handleLogin}>
+                <div>
+                    <label>Email</label>
+                    <input 
+                        type="email" 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        required 
+                    />
+                </div>
+                <div>
+                    <label>Password</label>
+                    <input 
+                        type="password" 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        required 
+                    />
+                </div>
+                {loginError && <p className="error-message-box">{loginError}</p>}
+                <button type="submit">Log In</button>
+            </form>
+        </div>
+    );
+}
+ 
+export default Login;
+>>>>>>> 3ba936c (I only moved the components folder into the src folder. It shouldn't be outside in the first place)
