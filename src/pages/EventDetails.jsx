@@ -1,0 +1,301 @@
+import { useEffect, useState } from "react";
+import {
+  Link,
+  useParams,
+} from "react-router-dom";
+
+import { apiRequest } from "../services/api";
+
+import "./EventDetails.css";
+
+function EventDetails() {
+  const { id } = useParams();
+
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    loadEvent();
+  }, [id]);
+
+  async function loadEvent() {
+    try {
+      setLoading(true);
+      setError("");
+
+    
+      const data = await apiRequest(
+        "/api/events"
+      );
+
+      const foundEvent = data.find(
+        (item) => item._id === id
+      );
+
+      if (!foundEvent) {
+        throw new Error(
+          "Event could not be found."
+        );
+      }
+
+      setEvent(foundEvent);
+
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function getEventType() {
+    return (
+      event?.type ||
+      event?.category ||
+      "Music"
+    );
+  }
+
+  function getEventImage() {
+    if (event?.image) {
+      return event.image;
+    }
+
+    const type =
+      getEventType().toLowerCase();
+
+    if (
+      type.includes("sport") ||
+      type.includes("football")
+    ) {
+      return "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1400&q=80";
+    }
+
+    if (
+      type.includes("theatre") ||
+      type.includes("theater")
+    ) {
+      return "https://images.unsplash.com/photo-1503095396549-807759245b35?auto=format&fit=crop&w=1400&q=80";
+    }
+
+    return "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1400&q=80";
+  }
+
+  function formatDate(date) {
+    return new Date(date).toLocaleDateString(
+      "en-ZA",
+      {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="event-details-page">
+        <div className="loading">
+          Loading event...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="event-details-page">
+
+        <div className="details-error">
+          <h2>
+            Something went wrong
+          </h2>
+
+          <p>
+            {error}
+          </p>
+
+          <button
+            onClick={loadEvent}
+            className="retry-button"
+          >
+            Try Again
+          </button>
+
+        </div>
+
+      </div>
+    );
+  }
+
+  if (!event) {
+    return null;
+  }
+
+  return (
+    <div className="event-details-page">
+
+      <Link
+        to="/events"
+        className="back-link"
+      >
+        ← Back to Events
+      </Link>
+
+      <div className="event-details-card">
+
+        <div className="details-image">
+
+          <img
+            src={getEventImage()}
+            alt={event.title}
+          />
+
+          <div className="details-type">
+            {getEventType()}
+          </div>
+
+        </div>
+
+        <div className="details-content">
+
+          <p className="details-label">
+            EVENT
+          </p>
+
+          <h1>
+            {event.title}
+          </h1>
+
+          <p className="details-description">
+            {event.description}
+          </p>
+
+          <div className="details-info">
+
+            <div className="info-box">
+
+              <span className="info-icon">
+                
+              </span>
+
+              <div>
+                <small>
+                  DATE
+                </small>
+
+                <strong>
+                  {formatDate(event.date)}
+                </strong>
+              </div>
+
+            </div>
+
+            <div className="info-box">
+
+              <span className="info-icon">
+                
+              </span>
+
+              <div>
+                <small>
+                  TIME
+                </small>
+
+                <strong>
+                  {event.startTime ||
+                    "19:00"}
+                </strong>
+              </div>
+
+            </div>
+
+            <div className="info-box">
+
+              <span className="info-icon">
+                
+              </span>
+
+              <div>
+                <small>
+                  VENUE
+                </small>
+
+                <strong>
+                  {event.venueId?.name ||
+                    event.venue ||
+                    "VenueFlow Arena"}
+                </strong>
+              </div>
+
+            </div>
+
+            <div className="info-box">
+
+              <span className="info-icon">
+                
+              </span>
+
+              <div>
+                <small>
+                  TICKET PRICE
+                </small>
+
+                <strong className="ticket-price">
+                  R{event.ticketPrice}
+                </strong>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div className="location-box">
+
+            <span>
+              
+            </span>
+
+            <div>
+
+              <strong>
+                {event.venueId?.name ||
+                  event.venue ||
+                  "VenueFlow Arena"}
+              </strong>
+
+              <p>
+                {event.venueId?.address ||
+                  "123 Main Street"}
+                <br />
+
+                {event.venueId?.city ||
+                  "Johannesburg"}
+              </p>
+
+            </div>
+
+          </div>
+
+          <Link
+            to={`/events/${event._id}/seats`}
+            className="select-seats-button"
+          >
+            Select Seats
+            <span>
+              →
+            </span>
+          </Link>
+
+        </div>
+
+      </div>
+
+    </div>
+  );
+}
+
+export default EventDetails;

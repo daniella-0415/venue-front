@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { app } from '../firebase';
 import "./Signup.css"; 
 
 const auth = getAuth(app);
 
-function Signup({ onNavigate }) {
+function Signup() {// Added navigation hook
     const [fullName, setFullName] = useState(''); 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -28,15 +29,13 @@ function Signup({ onNavigate }) {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const firebaseUser = userCredential.user;
 
-            const idToken = await firebaseUser.getIdToken();
-
-            const response = await fetch('http://localhost:3000/api/register', {
+            const response = await fetch('http://localhost:3000/api/users/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    idToken: idToken,
+                    firebaseUID: firebaseUser.uid, 
                     name: fullName.trim(),
                     email: email,
                     role: "Customer" 
@@ -56,7 +55,7 @@ function Signup({ onNavigate }) {
             setPassword('');
             setConfirmPassword('');
             
-            onNavigate();
+            navigate('/login'); 
         }
         catch (error) {
             const friendlyMessage = error.message.replace('Firebase: ', '');
@@ -166,7 +165,7 @@ function Signup({ onNavigate }) {
 
                     <p className="redirect-footer">
                         Already have an account?{' '}
-                        <span className="highlight-link" onClick={onNavigate}>
+                        <span className="highlight-link" onClick={() => navigate('/login')}>
                             Sign in
                         </span>
                     </p>

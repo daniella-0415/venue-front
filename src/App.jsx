@@ -1,18 +1,50 @@
-import React from 'react';
-import Signup from "./Components/Signup";
-import "./index.css"; 
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./Components/AuthContext";
+
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Events from "./pages/Events";
+import EventDetails from "./pages/EventDetails";
+import SeatSelection from "./pages/SeatSelector";
+import BookingHistory from "./pages/BookingHistory";
 
 function App() {
-  const [currentView, setCurrentView] = useState('login'); 
-
   return (
-    <div className="App">
-      {currentView === 'login' ? (
-        <Login onNavigate={() => setCurrentView('signup')} />
-      ) : (
-        <Signup onNavigate={() => setCurrentView('login')} />
-      )}
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/login"
+            element={<Login />}
+          />
+
+          <Route
+            path="/signup"
+            element={<Signup />}
+          />
+
+          <Route
+            path="/events"
+            element={<Events />}
+          />
+
+          <Route
+            path="/events/:id"
+            element={<EventDetails />}
+          />
+
+          <Route
+            path="/events/:id/seats"
+            element={<SeatSelection />}
+          />
+
+          <Route
+            path="/bookings"
+            element={<BookingHistory />}
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
