@@ -7,6 +7,8 @@ import "./Signup.css";
 const auth = getAuth(app);
 
 function Signup() {
+    const navigate = useNavigate(); 
+
     const [fullName, setFullName] = useState(''); 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -51,11 +53,13 @@ function Signup() {
             alert("Account registered and synchronized successfully!");
             
             setFullName('');
-            setEmail('');
-            setPassword('');
+            setPassword('');            setFullName('');
+
             setConfirmPassword('');
             
-            navigate('/login'); 
+            // 4. Redirect to login view, passing the email forward in the navigation state
+            navigate('/login', { state: { registeredEmail: email } }); 
+            setEmail('');
         }
         catch (error) {
             const friendlyMessage = error.message.replace('Firebase: ', '');
@@ -163,9 +167,10 @@ function Signup() {
                         </button>
                     </form>
 
+                    {/* REDIRECT ANCHOR LINK */}
                     <p className="redirect-footer">
                         Already have an account?{' '}
-                        <span className="highlight-link" onClick={() => navigate('/login')}>
+                        <span className="highlight-link" onClick={() => navigate('/login')} style={{ cursor: "pointer" }}>
                             Sign in
                         </span>
                     </p>
