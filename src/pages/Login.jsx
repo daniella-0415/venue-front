@@ -82,7 +82,6 @@ function Login() {
     <div className="login-page-container">
       <div className="login-wrapper">
         
-        {/* LEFT SIDE - BANNER DISPLAY */}
         <div className="banner-side">
           <div className="banner-overlay"></div>
           <div className="banner-content">
@@ -161,7 +160,6 @@ function Login() {
             </button>
           </form>
 
-          {/* SIGN UP REDIRECT */}
           <p className="redirect-footer">
             Don't have an account?{" "}
             <span

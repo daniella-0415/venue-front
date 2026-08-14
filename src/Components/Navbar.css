@@ -1,4 +1,3 @@
-/* Navbar.css */
 
 .navbar {
   width: 100%;
@@ -17,7 +16,6 @@
   z-index: 1000;
 }
 
-/* Logo */
 
 .logo {
   text-decoration: none;
@@ -30,7 +28,6 @@
   color: #e91e63;
 }
 
-/* Navigation links */
 
 .nav-links {
   display: flex;
@@ -51,7 +48,6 @@
   color: #e91e63;
 }
 
-/* User section */
 
 .nav-user {
   display: flex;
@@ -59,14 +55,12 @@
   gap: 15px;
 }
 
-/* User name */
 
 .user-name {
   font-size: 14px;
   color: #333333;
 }
 
-/* Logout button */
 
 .logout-btn {
   border: none;

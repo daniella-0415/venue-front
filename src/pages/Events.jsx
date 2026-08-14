@@ -201,7 +201,7 @@ function Events() {
                 <div className="event-bottom">
 
                   <span className="venue">
-                    📍{" "}
+                    {" "}
                     {event.venueId?.name ||
                       event.venue ||
                       "VenueFlow Arena"}
