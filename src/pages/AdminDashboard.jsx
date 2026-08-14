@@ -54,31 +54,31 @@ function AdminDashboard() {
         <div className="stats-grid">
 
           <div className="stat-card">
-            <span>👥</span>
+            <span></span>
             <h2>{stats.users}</h2>
             <p>Users</p>
           </div>
 
           <div className="stat-card">
-            <span>🏢</span>
+            <span></span>
             <h2>{stats.venues}</h2>
             <p>Venues</p>
           </div>
 
           <div className="stat-card">
-            <span>🎭</span>
+            <span></span>
             <h2>{stats.events}</h2>
             <p>Events</p>
           </div>
 
           <div className="stat-card">
-            <span>🎟️</span>
+            <span></span>
             <h2>{stats.bookings}</h2>
             <p>Bookings</p>
           </div>
 
           <div className="stat-card">
-            <span>💰</span>
+            <span></span>
             <h2>
               R{stats.totalRevenue}
             </h2>
@@ -94,7 +94,7 @@ function AdminDashboard() {
           to="/admin/users"
           className="dashboard-card"
         >
-          <span>👥</span>
+          <span></span>
 
           <h2>
             User Management
@@ -109,7 +109,7 @@ function AdminDashboard() {
           to="/events"
           className="dashboard-card"
         >
-          <span>🎭</span>
+          <span></span>
 
           <h2>
             Events
@@ -124,7 +124,7 @@ function AdminDashboard() {
           to="/venues"
           className="dashboard-card"
         >
-          <span>🏢</span>
+          <span></span>
 
           <h2>
             Venues

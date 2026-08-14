@@ -39,7 +39,6 @@ function BookingHistory() {
   return (
     <div className="booking-page">
 
-      {/* HEADER */}
       <div className="booking-header">
 
         <div>

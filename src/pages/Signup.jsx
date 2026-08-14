@@ -6,7 +6,7 @@ import "./Signup.css";
 
 const auth = getAuth(app);
 
-function Signup() {// Added navigation hook
+function Signup() {
     const [fullName, setFullName] = useState(''); 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

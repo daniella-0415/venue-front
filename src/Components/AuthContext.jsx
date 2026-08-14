@@ -22,7 +22,6 @@ export function AuthProvider({ children }) {
             const data = await response.json();
             setRole(data.role);
           } else {
-            // DEVELOPMENT WORKAROUND: Fallback role configuration if user profile doesn't exist yet
             setRole("Customer");
           }
         } catch (error) {
