@@ -1,0 +1,316 @@
+.customer-events-page {
+  min-height: 100vh;
+  background: #f7f7f9;
+  color: #1d1d1f;
+}
+
+/* HEADER */
+
+.customer-header {
+  height: 75px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7%;
+  border-bottom: 1px solid #e8e8ec;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.customer-logo {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.customer-logo span {
+  color: #6c4cff;
+}
+
+.customer-header nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.customer-header nav button {
+  border: none;
+  background: transparent;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+}
+
+.customer-header nav button:hover {
+  background: #f1efff;
+  color: #6c4cff;
+}
+
+.customer-header nav .active-nav {
+  background: #6c4cff;
+  color: white;
+}
+
+/* CONTENT */
+
+.events-content {
+  width: 86%;
+  max-width: 1250px;
+  margin: auto;
+  padding: 60px 0;
+}
+
+.events-heading {
+  margin-bottom: 40px;
+}
+
+.small-heading {
+  color: #6c4cff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.events-heading h1 {
+  font-size: 42px;
+  margin: 0 0 10px;
+  letter-spacing: -1.5px;
+}
+
+.events-heading > p:last-child {
+  color: #777;
+  margin: 0;
+}
+
+/* GRID */
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(300px, 1fr)
+  );
+  gap: 25px;
+}
+
+/* CARD */
+
+.event-card {
+  background: white;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid #e8e8ec;
+  box-shadow: 0 8px 30px rgba(
+    0,
+    0,
+    0,
+    0.05
+  );
+  transition: 0.25s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(
+    0,
+    0,
+    0,
+    0.09
+  );
+}
+
+/* IMAGE */
+
+.event-image {
+  height: 210px;
+  overflow: hidden;
+  background: #eee;
+}
+
+.event-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.event-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    #6c4cff,
+    #a78bfa
+  );
+  color: white;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+/* INFO */
+
+.event-info {
+  padding: 24px;
+}
+
+.event-info h2 {
+  margin: 0 0 10px;
+  font-size: 22px;
+}
+
+.event-description {
+  color: #777;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 42px;
+}
+
+/* DETAILS */
+
+.event-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin: 22px 0;
+}
+
+.event-details div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.event-details strong {
+  font-size: 11px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.event-details span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* BUTTON */
+
+.view-event-button {
+  width: 100%;
+  border: none;
+  background: #6c4cff;
+  color: white;
+  padding: 13px;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.view-event-button:hover {
+  background: #5838e6;
+}
+
+/* LOADING */
+
+.events-loading {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: #666;
+}
+
+/* ERROR */
+
+.events-error {
+  width: 90%;
+  max-width: 500px;
+  margin: 100px auto;
+  background: white;
+  padding: 40px;
+  text-align: center;
+  border-radius: 16px;
+}
+
+.events-error h2 {
+  margin-top: 0;
+}
+
+.events-error p {
+  color: #777;
+}
+
+.events-error button {
+  background: #6c4cff;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* NO EVENTS */
+
+.no-events {
+  background: white;
+  padding: 70px 30px;
+  text-align: center;
+  border-radius: 18px;
+}
+
+.no-events h2 {
+  margin-top: 0;
+}
+
+.no-events p {
+  color: #777;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+  .customer-header {
+    height: auto;
+    padding: 18px 5%;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .customer-header nav {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .customer-header nav button {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .events-content {
+    width: 90%;
+    padding: 40px 0;
+  }
+
+  .events-heading h1 {
+    font-size: 32px;
+  }
+
+  .events-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .event-image {
+    height: 190px;
+  }
+
+}
