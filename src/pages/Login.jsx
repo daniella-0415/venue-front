@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; 
 import { app } from "../firebase";
 import "./Login.css";
 
@@ -8,11 +8,18 @@ const auth = getAuth(app);
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation(); 
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.registeredEmail) {
+      setEmail(location.state.registeredEmail);
+    }
+  }, [location.state]);
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -28,7 +35,6 @@ function Login() {
       );
 
       const firebaseUser = userCredential.user;
-
       const idToken = await firebaseUser.getIdToken();
 
       localStorage.setItem("venueflowToken", idToken);
