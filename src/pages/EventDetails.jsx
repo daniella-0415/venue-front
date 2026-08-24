@@ -24,27 +24,16 @@ function EventDetails() {
       setLoading(true);
       setError("");
 
-    
-      const data = await apiRequest(
-        "/api/events"
-      );
+      const data = await apiRequest(`/api/events/${id}`);
 
-      const foundEvent = data.find(
-        (item) => item._id === id
-      );
-
-      if (!foundEvent) {
-        throw new Error(
-          "Event could not be found."
-        );
+      if (!data || !data._id) {
+        throw new Error("Event could not be found.");
       }
 
-      setEvent(foundEvent);
-
+      setEvent(data);
     } catch (err) {
       console.error(err);
       setError(err.message);
-
     } finally {
       setLoading(false);
     }

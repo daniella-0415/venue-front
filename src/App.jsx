@@ -1,47 +1,34 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./Components/AuthContext";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./Components/AuthContext.jsx";
+import ProtectedRoute from "./Components/ProtectedRoute.jsx"; 
 
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Events from "./pages/Events";
-import EventDetails from "./pages/EventDetails";
-import SeatSelection from "./pages/SeatSelector";
-import BookingHistory from "./pages/BookingHistory";
+import Login from "./pages/Login.jsx";
+import Signup from "./pages/Signup.jsx";
+import Events from "./pages/Events.jsx";
+import EventDetails from "./pages/EventDetails.jsx";
+import SeatSelection from "./pages/SeatSelector.jsx";
+import BookingHistory from "./pages/BookingHistory.jsx";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route
-            path="/login"
-            element={<Login />}
-          />
+          
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-          <Route
-            path="/signup"
-            element={<Signup />}
-          />
+          
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Navigate to="/events" replace />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/events/:id" element={<EventDetails />} />
+            <Route path="/events/:id/seats" element={<SeatSelection />} />
+            <Route path="/bookings" element={<BookingHistory />} />
+          </Route>
 
-          <Route
-            path="/events"
-            element={<Events />}
-          />
-
-          <Route
-            path="/events/:id"
-            element={<EventDetails />}
-          />
-
-          <Route
-            path="/events/:id/seats"
-            element={<SeatSelection />}
-          />
-
-          <Route
-            path="/bookings"
-            element={<BookingHistory />}
-          />
+          
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
