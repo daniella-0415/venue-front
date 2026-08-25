@@ -59,7 +59,7 @@ function Home() {
 
           <p>
             Find your event and book your
-            seats in just a few clicks.
+            seats in just a few clicks
           </p>
         </div>
 

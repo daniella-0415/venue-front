@@ -53,7 +53,6 @@ function SeatSelection() {
   async function handleBooking() {
     setError("");
 
-  
 
     if (selectedSeats.length === 0) {
       setError("Please select at least one seat.");
