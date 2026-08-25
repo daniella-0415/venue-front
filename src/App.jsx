@@ -26,7 +26,7 @@ function App() {
           <Route
             path="/events"
             element={<Events />}
-          />
+          />http://localhost:5173/
 
           <Route
             path="/events/:id"
