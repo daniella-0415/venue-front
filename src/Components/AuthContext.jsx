@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "../firebase.js";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { app } from "../firebase-front.js";
+import { apiRequest } from "../services/api";
 
 const AuthContext = createContext(null);
 const auth = getAuth(app);
@@ -16,21 +17,29 @@ export function AuthProvider({ children }) {
         setUser(firebaseUser);
 
         try {
-          const response = await fetch(`http://localhost:3000/api/users/${firebaseUser.uid}`);
+          const data = await apiRequest(`/api/users/${firebaseUser.uid}`);
+          setRole(data?.role || "Customer");
           
-          if (response.ok) {
-            const data = await response.json();
-            setRole(data.role);
+          localStorage.setItem("venueflowUser", JSON.stringify(data || firebaseUser));
+        } catch (error) {
+          console.error("Failed to fetch user role from backend, checking storage fallback:", error);
+          const savedUser = localStorage.getItem("venueflowUser");
+          if (savedUser) {
+            try {
+              const parsed = JSON.parse(savedUser);
+              setRole(parsed.role || "Customer");
+            } catch (e) {
+              setRole("Customer");
+            }
           } else {
             setRole("Customer");
           }
-        } catch (error) {
-          console.error("Failed to fetch user role, using development fallback:", error);
-          setRole("Customer");
         }
       } else {
         setUser(null);
         setRole(null);
+        localStorage.removeItem("venueflowUser");
+        localStorage.removeItem("venueflowToken");
       }
       setLoading(false);
     });
@@ -38,8 +47,16 @@ export function AuthProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
+  const logout = async () => {
+    await signOut(auth);
+    setUser(null);
+    setRole(null);
+    localStorage.removeItem("venueflowUser");
+    localStorage.removeItem("venueflowToken");
+  };
+
   return (
-    <AuthContext.Provider value={{ user, role, loading }}>
+    <AuthContext.Provider value={{ user, role, loading, logout }}>
       {!loading && children}
     </AuthContext.Provider>
   );

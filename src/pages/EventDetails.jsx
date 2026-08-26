@@ -111,16 +111,14 @@ function EventDetails() {
 
   return (
     <div className="event-details-page">
-      {/* BACK */}
+      
 
       <Link to="/events" className="back-link">
-        ← Back to Events
+        Back to Events
       </Link>
 
-      {/* EVENT CARD */}
-
       <div className="event-details-card">
-        {/* IMAGE */}
+        
 
         <div className="details-image">
           <img src={getEventImage()} alt={event.title} />
@@ -128,7 +126,6 @@ function EventDetails() {
           <div className="details-type">🎵 {getEventType()}</div>
         </div>
 
-        {/* CONTENT */}
 
         <div className="details-content">
           <p className="details-label">EVENT</p>
@@ -136,8 +133,6 @@ function EventDetails() {
           <h1>{event.title}</h1>
 
           <p className="details-description">{event.description}</p>
-
-          {/* EVENT INFORMATION */}
 
           <div className="details-info">
             <div className="info-box">
@@ -161,7 +156,7 @@ function EventDetails() {
             </div>
 
             <div className="info-box">
-              <span className="info-icon">📍</span>
+              <span className="info-icon">Location icon here</span>
 
               <div>
                 <small>VENUE</small>
@@ -171,7 +166,7 @@ function EventDetails() {
             </div>
 
             <div className="info-box">
-              <span className="info-icon">🎟️</span>
+              <span className="info-icon">info icon here</span>
 
               <div>
                 <small>TICKET PRICE</small>
@@ -181,10 +176,9 @@ function EventDetails() {
             </div>
           </div>
 
-          {/* LOCATION */}
 
           <div className="location-box">
-            <span className="location-icon">📍</span>
+            <span className="location-icon">Location icon here</span>
 
             <div>
               <strong>{venueName}</strong>
@@ -199,8 +193,6 @@ function EventDetails() {
             </div>
           </div>
 
-          {/* GOOGLE MAP */}
-
           <div className="event-map-section">
             <div className="map-heading">
               <p>LOCATION</p>
@@ -208,10 +200,8 @@ function EventDetails() {
               <h2>Find the Venue</h2>
             </div>
 
-            <GoogleMap />
+            <GoogleMap venueLocation={event.venueId?.location}/>
           </div>
-
-          {/* SELECT SEATS */}
 
           <Link
             to={`/events/${event._id}/seats`}
