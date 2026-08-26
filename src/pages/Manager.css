@@ -1,0 +1,161 @@
+.manager-page {
+  min-height: 100vh;
+  padding: 40px;
+  background: #f7f8fc;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.manager-header {
+  margin-bottom: 35px;
+}
+
+.page-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #6b7280;
+}
+
+.manager-header h1 {
+  margin: 0;
+  font-size: 36px;
+  color: #111827;
+}
+
+.manager-header p {
+  margin-top: 10px;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+/* =========================
+   DASHBOARD CARDS
+========================= */
+
+.manager-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.manager-card {
+  display: block;
+  padding: 28px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  text-decoration: none;
+  color: inherit;
+  transition: 0.25s ease;
+}
+
+.manager-card:hover {
+  transform: translateY(-5px);
+  border-color: #111827;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+.manager-card-icon {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  background: #f1f3f7;
+  font-size: 24px;
+}
+
+.manager-card h2 {
+  margin: 0 0 10px;
+  color: #111827;
+  font-size: 22px;
+}
+
+.manager-card p {
+  margin: 0 0 22px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.manager-card-link {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* =========================
+   QUICK ACTIONS
+========================= */
+
+.manager-actions {
+  margin-top: 45px;
+}
+
+.section-heading {
+  margin-bottom: 20px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 26px;
+  color: #111827;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.quick-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 22px;
+  border-radius: 12px;
+  background: #111827;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.quick-action:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .manager-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .manager-page {
+    padding: 24px 16px;
+  }
+
+  .manager-header h1 {
+    font-size: 28px;
+  }
+
+  .quick-actions {
+    flex-direction: column;
+  }
+
+  .quick-action {
+    justify-content: center;
+  }
+}

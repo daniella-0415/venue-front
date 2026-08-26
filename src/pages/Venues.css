@@ -1,0 +1,11 @@
+.venue-map {
+  width: 100%;
+  margin-top: 18px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.venue-map > div {
+  width: 100% !important;
+}
