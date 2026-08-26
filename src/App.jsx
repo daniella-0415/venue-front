@@ -27,8 +27,25 @@ function App() {
             <Route path="/bookings" element={<BookingHistory />} />
           </Route>
 
-          
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route
+            path="/events"
+            element={<Events />}
+          />http://localhost:5173/
+
+          <Route
+            path="/events/:id"
+            element={<EventDetails />}
+          />
+
+          <Route
+            path="/events/:id/seats"
+            element={<SeatSelection />}
+          />
+
+          <Route
+            path="/bookings"
+            element={<BookingHistory />}
+          />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

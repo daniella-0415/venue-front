@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import {
-  Link,
-  useParams,
-} from "react-router-dom";
 
+import { Link, useParams } from "react-router-dom";
+
+import GoogleMap from "../Components/ GoogleMap";
 import { apiRequest } from "../services/api";
 
 import "./EventDetails.css";
@@ -12,7 +11,9 @@ function EventDetails() {
   const { id } = useParams();
 
   const [event, setEvent] = useState(null);
+
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -22,17 +23,21 @@ function EventDetails() {
   async function loadEvent() {
     try {
       setLoading(true);
+
       setError("");
 
-      const data = await apiRequest(`/api/events/${id}`);
+      const data = await apiRequest("/api/events");
 
-      if (!data || !data._id) {
+      const foundEvent = data.find((item) => item._id === id);
+
+      if (!foundEvent) {
         throw new Error("Event could not be found.");
       }
 
-      setEvent(data);
+      setEvent(foundEvent);
     } catch (err) {
       console.error(err);
+
       setError(err.message);
     } finally {
       setLoading(false);
@@ -40,11 +45,7 @@ function EventDetails() {
   }
 
   function getEventType() {
-    return (
-      event?.type ||
-      event?.category ||
-      "Music"
-    );
+    return event?.type || event?.category || "Music";
   }
 
   function getEventImage() {
@@ -52,20 +53,13 @@ function EventDetails() {
       return event.image;
     }
 
-    const type =
-      getEventType().toLowerCase();
+    const type = getEventType().toLowerCase();
 
-    if (
-      type.includes("sport") ||
-      type.includes("football")
-    ) {
+    if (type.includes("sport") || type.includes("football")) {
       return "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1400&q=80";
     }
 
-    if (
-      type.includes("theatre") ||
-      type.includes("theater")
-    ) {
+    if (type.includes("theatre") || type.includes("theater")) {
       return "https://images.unsplash.com/photo-1503095396549-807759245b35?auto=format&fit=crop&w=1400&q=80";
     }
 
@@ -73,23 +67,18 @@ function EventDetails() {
   }
 
   function formatDate(date) {
-    return new Date(date).toLocaleDateString(
-      "en-ZA",
-      {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }
-    );
+    return new Date(date).toLocaleDateString("en-ZA", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
   }
 
   if (loading) {
     return (
       <div className="event-details-page">
-        <div className="loading">
-          Loading event...
-        </div>
+        <div className="loading">Loading event...</div>
       </div>
     );
   }
@@ -97,25 +86,15 @@ function EventDetails() {
   if (error) {
     return (
       <div className="event-details-page">
-
         <div className="details-error">
-          <h2>
-            Something went wrong
-          </h2>
+          <h2>Something went wrong</h2>
 
-          <p>
-            {error}
-          </p>
+          <p>{error}</p>
 
-          <button
-            onClick={loadEvent}
-            className="retry-button"
-          >
+          <button onClick={loadEvent} className="retry-button">
             Try Again
           </button>
-
         </div>
-
       </div>
     );
   }
@@ -124,165 +103,124 @@ function EventDetails() {
     return null;
   }
 
+  const venueName = event.venueId?.name || event.venue || "VenueFlow Arena";
+
+  const venueAddress = event.venueId?.address || "123 Main Street";
+
+  const venueCity = event.venueId?.city || "Johannesburg";
+
   return (
     <div className="event-details-page">
+      {/* BACK */}
 
-      <Link
-        to="/events"
-        className="back-link"
-      >
+      <Link to="/events" className="back-link">
         ← Back to Events
       </Link>
 
+      {/* EVENT CARD */}
+
       <div className="event-details-card">
+        {/* IMAGE */}
 
         <div className="details-image">
+          <img src={getEventImage()} alt={event.title} />
 
-          <img
-            src={getEventImage()}
-            alt={event.title}
-          />
-
-          <div className="details-type">
-            {getEventType()}
-          </div>
-
+          <div className="details-type">🎵 {getEventType()}</div>
         </div>
 
+        {/* CONTENT */}
+
         <div className="details-content">
+          <p className="details-label">EVENT</p>
 
-          <p className="details-label">
-            EVENT
-          </p>
+          <h1>{event.title}</h1>
 
-          <h1>
-            {event.title}
-          </h1>
+          <p className="details-description">{event.description}</p>
 
-          <p className="details-description">
-            {event.description}
-          </p>
+          {/* EVENT INFORMATION */}
 
           <div className="details-info">
-
             <div className="info-box">
-
-              <span className="info-icon">
-                
-              </span>
+              <span className="info-icon">📅</span>
 
               <div>
-                <small>
-                  DATE
-                </small>
+                <small>DATE</small>
 
-                <strong>
-                  {formatDate(event.date)}
-                </strong>
+                <strong>{formatDate(event.date)}</strong>
               </div>
-
             </div>
 
             <div className="info-box">
-
-              <span className="info-icon">
-                
-              </span>
+              <span className="info-icon">🕐</span>
 
               <div>
-                <small>
-                  TIME
-                </small>
+                <small>TIME</small>
 
-                <strong>
-                  {event.startTime ||
-                    "19:00"}
-                </strong>
+                <strong>{event.startTime || event.time || "19:00"}</strong>
               </div>
-
             </div>
 
             <div className="info-box">
-
-              <span className="info-icon">
-                
-              </span>
+              <span className="info-icon">📍</span>
 
               <div>
-                <small>
-                  VENUE
-                </small>
+                <small>VENUE</small>
 
-                <strong>
-                  {event.venueId?.name ||
-                    event.venue ||
-                    "VenueFlow Arena"}
-                </strong>
+                <strong>{venueName}</strong>
               </div>
-
             </div>
 
             <div className="info-box">
-
-              <span className="info-icon">
-                
-              </span>
+              <span className="info-icon">🎟️</span>
 
               <div>
-                <small>
-                  TICKET PRICE
-                </small>
+                <small>TICKET PRICE</small>
 
-                <strong className="ticket-price">
-                  R{event.ticketPrice}
-                </strong>
+                <strong className="ticket-price">R{event.ticketPrice}</strong>
               </div>
-
             </div>
-
           </div>
+
+          {/* LOCATION */}
 
           <div className="location-box">
-
-            <span>
-              
-            </span>
+            <span className="location-icon">📍</span>
 
             <div>
-
-              <strong>
-                {event.venueId?.name ||
-                  event.venue ||
-                  "VenueFlow Arena"}
-              </strong>
+              <strong>{venueName}</strong>
 
               <p>
-                {event.venueId?.address ||
-                  "123 Main Street"}
+                {venueAddress}
+
                 <br />
 
-                {event.venueId?.city ||
-                  "Johannesburg"}
+                {venueCity}
               </p>
+            </div>
+          </div>
 
+          {/* GOOGLE MAP */}
+
+          <div className="event-map-section">
+            <div className="map-heading">
+              <p>LOCATION</p>
+
+              <h2>Find the Venue</h2>
             </div>
 
+            <GoogleMap />
           </div>
+
+          {/* SELECT SEATS */}
 
           <Link
             to={`/events/${event._id}/seats`}
             className="select-seats-button"
           >
-            Select Seats
-            <span>
-              →
-            </span>
+            Select Seats →
           </Link>
-
         </div>
-
       </div>
-
     </div>
   );
 }
