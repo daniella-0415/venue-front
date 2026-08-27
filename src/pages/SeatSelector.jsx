@@ -50,9 +50,9 @@ function SeatSelection() {
     });
   }
 
-  async function handleBooking() {
+  async function handleBooking(e) {
+    if (e) e.preventDefault();
     setError("");
-
 
     if (selectedSeats.length === 0) {
       setError("Please select at least one seat.");
@@ -68,12 +68,19 @@ function SeatSelection() {
         })
       });
 
-      console.log("Booking created:", result);
+      console.log("Full booking response:", result);
+      
+      const bookingId = 
+        result?.booking?._id || 
+        result?.booking?.id || 
+        result?._id || 
+        result?.id;
 
-      if (result?._id || result?.booking?._id) {
-        navigate("/bookings");
+      if (bookingId) {
+        console.log("Successfully found booking ID, navigating now to:", `/payments?bookingId=${bookingId}`);
+        navigate(`/payments?bookingId=${bookingId}`);
       } else {
-        setError("Booking was created, but no booking ID was returned.");
+        setError("Booking created, but could not read the booking ID from the response.");
       }
 
     } catch (err) {
