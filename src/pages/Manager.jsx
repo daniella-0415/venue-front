@@ -23,7 +23,7 @@ function Manager() {
       <div className="manager-cards">
 
         <Link to="/manager/venues" className="manager-card">
-          <span className="manager-card-icon">📍</span>
+          <span className="manager-card-icon"></span>
 
           <h2>Venues</h2>
 
@@ -33,12 +33,12 @@ function Manager() {
           </p>
 
           <span className="manager-card-link">
-            Manage Venues →
+            Manage Venues 
           </span>
         </Link>
 
         <Link to="/manager/events" className="manager-card">
-          <span className="manager-card-icon">🎫</span>
+          <span className="manager-card-icon"></span>
 
           <h2>Events</h2>
 
@@ -53,7 +53,7 @@ function Manager() {
         </Link>
 
         <Link to="/manager/bookings" className="manager-card">
-          <span className="manager-card-icon">📋</span>
+          <span className="manager-card-icon"></span>
 
           <h2>Bookings</h2>
 
@@ -63,7 +63,7 @@ function Manager() {
           </p>
 
           <span className="manager-card-link">
-            View Bookings →
+            View Bookings 
           </span>
         </Link>
 
