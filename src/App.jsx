@@ -1,113 +1,53 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./Components/AuthContext";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./Components/AuthContext.jsx";
+import ProtectedRoute from "./Components/ProtectedRoute.jsx"; 
 
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
+import Login from "./pages/Login.jsx";
+import Signup from "./pages/Signup.jsx";
+import Events from "./pages/Events.jsx";
+import EventDetails from "./pages/EventDetails.jsx";
+import SeatSelection from "./pages/SeatSelector.jsx";
+import BookingHistory from "./pages/BookingHistory.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
+import ManagerDashboard from "./pages/ManagerDashboard.jsx";
 
-import Manager from "./pages/Manager";
-import Venues from "./pages/Venues";
-import Events from "./pages/Events";
 
-import EventDetails from "./pages/EventDetails";
-import SeatSelection from "./pages/SeatSelector";
-import BookingHistory from "./pages/BookingHistory";
-import BookingConfirmation from "./pages/BookingConfirmation";
+import Payments from "./pages/Payments";
+import PaymentResult from "./pages/PaymentsResult";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-          {/* =========================
-              AUTH
-          ========================= */}
+         
+          <Route element={<ProtectedRoute allowedRoles={["Customer", "Manager", "Admin"]} />}>
+            <Route path="/" element={<Navigate to="/events" replace />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/events/:id" element={<EventDetails />} />
+            <Route path="/events/:id/seats" element={<SeatSelection />} />
+            <Route path="/bookings" element={<BookingHistory />} />
+          </Route>
 
-          <Route
-            path="/login"
-            element={<Login />}
-          />
+          
+          <Route element={<ProtectedRoute allowedRoles={["Manager", "Admin"]} />}>
+            <Route path="/manager-dashboard" element={<ManagerDashboard />} />
+          </Route>
 
-          <Route
-            path="/signup"
-            element={<Signup />}
-          />
+          
+          <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          </Route>
 
+          <Route path="/payments" element={<Payments />} />
+<Route path="/payment-result" element={<PaymentResult />} />
 
-          {/* =========================
-              MANAGER DASHBOARD
-          ========================= */}
-
-          <Route
-            path="/manager"
-            element={<Manager />}
-          />
-
-
-          {/* =========================
-              MANAGER VENUES
-          ========================= */}
-
-          <Route
-            path="/manager/venues"
-            element={<Venues />}
-          />
-
-
-          {/* =========================
-              MANAGER EVENTS
-          ========================= */}
-
-          <Route
-            path="/manager/events"
-            element={<Events />}
-          />
-
-
-          {/* =========================
-              MANAGER BOOKINGS
-          ========================= */}
-
-          <Route
-            path="/manager/bookings"
-            element={
-              <div style={{ padding: "40px" }}>
-                <h1>Manager Bookings</h1>
-                <p>
-                  Booking management will be added next.
-                </p>
-              </div>
-            }
-          />
-<Route
-  path="/booking-confirmation"
-  element={<BookingConfirmation />}
-/>
-
-          {/* =========================
-              CUSTOMER EVENTS
-          ========================= */}
-
-          <Route
-            path="/events"
-            element={<Events />}
-          />
-
-          <Route
-            path="/events/:id"
-            element={<EventDetails />}
-          />
-
-          <Route
-            path="/events/:id/seats"
-            element={<SeatSelection />}
-          />
-
-          <Route
-            path="/bookings"
-            element={<BookingHistory />}
-          />
-
+          
+          <Route path="*" element={<Navigate to="/events" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

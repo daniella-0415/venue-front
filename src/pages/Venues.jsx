@@ -1,117 +1,727 @@
 import React, { useState, useEffect } from "react";
+import "./Venues.css";
+
+import AddressSearch from "../Components/AddressSearch";
+import GoogleMap from "../Components/ GoogleMap";
+
+const API_URL = "http://localhost:3000/api/venues";
 
 function Venues() {
   const [venues, setVenues] = useState([]);
+
   const [formData, setFormData] = useState({
     venueName: "",
     description: "",
     address: "",
+    city: "",
     capacity: "",
     numberOfRows: "",
     seatsPerRow: "",
+    latitude: "",
+    longitude: "",
+    placeId: "",
   });
+
   const [editingId, setEditingId] = useState(null);
+
+  const [message, setMessage] = useState("");
+
+  const [error, setError] = useState("");
+
 
   const fetchVenues = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/venues");
-      if (!res.ok) throw new Error("Failed to fetch venues");
+      setError("");
+
+      const res = await fetch(API_URL);
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch venues");
+      }
+
       const data = await res.json();
+
       setVenues(data);
+
     } catch (err) {
+
       console.error(err);
+
+      setError(err.message);
     }
   };
+
 
   useEffect(() => {
     fetchVenues();
   }, []);
 
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    const { name, value } = e.target;
+
+    setFormData((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const url = editingId ? `${"http://localhost:3000/api/venues"}/${editingId}` : "http://localhost:3000/api/venues";
-      const method = editingId ? "PUT" : "POST";
 
-      const res = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
 
-      if (!res.ok) throw new Error("Failed to save venue");
+  const handleAddressSelect = (locationData) => {
 
-      setEditingId(null);
-      setFormData({
-        venueName: "",
-        description: "",
-        address: "",
-        capacity: "",
-        numberOfRows: "",
-        seatsPerRow: "",
-      });
-      fetchVenues();
-    } catch (err) {
-      console.error(err);
+    setFormData((previous) => ({
+      ...previous,
+
+      address:
+        locationData.address || "",
+
+      city:
+        locationData.city || "",
+
+      latitude:
+        locationData.latitude || "",
+
+      longitude:
+        locationData.longitude || "",
+
+      placeId:
+        locationData.placeId || "",
+    }));
+
+
+    if (
+      locationData.latitude &&
+      locationData.longitude
+    ) {
+
+      setError("");
+
+      setMessage(
+        "Address found successfully."
+      );
     }
   };
 
+
+
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+
+    try {
+
+      setError("");
+
+      setMessage("");
+
+
+      if (
+        !formData.latitude ||
+        !formData.longitude
+      ) {
+
+        setError(
+          "Please search for and select the venue address."
+        );
+
+        return;
+      }
+
+
+      const url = editingId
+        ? `${API_URL}/${editingId}`
+        : API_URL;
+
+
+      const method = editingId
+        ? "PUT"
+        : "POST";
+
+
+      const body = {
+
+        venueName:
+          formData.venueName,
+
+        description:
+          formData.description,
+
+        address:
+          formData.address,
+
+        city:
+          formData.city,
+
+        capacity:
+          Number(formData.capacity),
+
+        numberOfRows:
+          Number(formData.numberOfRows),
+
+        seatsPerRow:
+          Number(formData.seatsPerRow),
+
+        latitude:
+          Number(formData.latitude),
+
+        longitude:
+          Number(formData.longitude),
+
+        placeId:
+          formData.placeId,
+      };
+
+
+      const res = await fetch(
+        url,
+        {
+          method,
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body:
+            JSON.stringify(body),
+        }
+      );
+
+
+      const data =
+        await res.json();
+
+
+      if (!res.ok) {
+
+        throw new Error(
+          data.message ||
+          data.error ||
+          "Failed to save venue"
+        );
+      }
+
+
+      setMessage(
+        editingId
+          ? "Venue updated successfully."
+          : "Venue created successfully."
+      );
+
+
+      resetForm();
+
+      fetchVenues();
+
+
+    } catch (err) {
+
+      console.error(err);
+
+      setError(err.message);
+    }
+  };
+
+
   const handleEdit = (venue) => {
-    setEditingId(venue._id);
+
+    setEditingId(
+      venue._id
+    );
+
+
+    const latitude =
+      venue.latitude ??
+      venue.location?.latitude ??
+      "";
+
+    const longitude =
+      venue.longitude ??
+      venue.location?.longitude ??
+      "";
+
+
     setFormData({
-      venueName: venue.venueName || "",
-      description: venue.description || "",
-      address: venue.address || "",
-      capacity: venue.capacity || "",
-      numberOfRows: venue.numberOfRows || "",
-      seatsPerRow: venue.seatsPerRow || "",
+
+      venueName:
+        venue.venueName ||
+        venue.name ||
+        "",
+
+      description:
+        venue.description ||
+        "",
+
+      address:
+        venue.address ||
+        "",
+
+      city:
+        venue.city ||
+        "",
+
+      capacity:
+        venue.capacity ||
+        "",
+
+      numberOfRows:
+        venue.numberOfRows ||
+        venue.rows ||
+        "",
+
+      seatsPerRow:
+        venue.seatsPerRow ||
+        "",
+
+      latitude,
+
+      longitude,
+
+      placeId:
+        venue.placeId ||
+        "",
+    });
+
+
+    setMessage("");
+
+    setError("");
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
     });
   };
 
-  const handleDelete = async (id) => {
-    try {
-      const res = await fetch(`${"http://localhost:3000/api/venues"}/${id}`, {
-        method: "DELETE",
-      });
 
-      if (!res.ok) throw new Error("Failed to delete venue");
+
+  const handleDelete = async (id) => {
+
+    const confirmed =
+      window.confirm(
+        "Are you sure you want to delete this venue?"
+      );
+
+
+    if (!confirmed) return;
+
+
+    try {
+
+      setError("");
+
+      setMessage("");
+
+
+      const res =
+        await fetch(
+          `${API_URL}/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+
+      const data =
+        await res.json();
+
+
+      if (!res.ok) {
+
+        throw new Error(
+          data.message ||
+          data.error ||
+          "Failed to delete venue"
+        );
+      }
+
+
+      setMessage(
+        "Venue deleted successfully."
+      );
+
 
       fetchVenues();
+
+
     } catch (err) {
+
       console.error(err);
+
+      setError(err.message);
     }
   };
 
+
+
+  const resetForm = () => {
+
+    setEditingId(null);
+
+    setFormData({
+
+      venueName: "",
+
+      description: "",
+
+      address: "",
+
+      city: "",
+
+      capacity: "",
+
+      numberOfRows: "",
+
+      seatsPerRow: "",
+
+      latitude: "",
+
+      longitude: "",
+
+      placeId: "",
+    });
+  };
+
+
   return (
-    <div>
-      <h2>{editingId ? "Edit Venue" : "Create Venue"}</h2>
-      <form onSubmit={handleSubmit}>
-        <input name="venueName" placeholder="Venue Name" value={formData.venueName} onChange={handleChange} required />
-        <input name="description" placeholder="Description" value={formData.description} onChange={handleChange} />
-        <input name="address" placeholder="Address" value={formData.address} onChange={handleChange} required />
-        <input name="capacity" type="number" placeholder="Capacity" value={formData.capacity} onChange={handleChange} required />
-        <input name="numberOfRows" type="number" placeholder="Rows" value={formData.numberOfRows} onChange={handleChange} required />
-        <input name="seatsPerRow" type="number" placeholder="Seats per row" value={formData.seatsPerRow} onChange={handleChange} required />
-        <button type="submit">{editingId ? "Update" : "Save"}</button>
-        {editingId && <button type="button" onClick={() => setEditingId(null)}>Cancel</button>}
+
+    <div className="venues-page">
+
+      <h2>
+        {editingId
+          ? "Edit Venue"
+          : "Create New Venue"}
+      </h2>
+
+
+      {error && (
+        <div className="venue-error">
+          {error}
+        </div>
+      )}
+
+
+      {message && (
+        <div className="venue-success">
+          {message}
+        </div>
+      )}
+
+
+      <form
+        onSubmit={handleSubmit}
+        className="venue-form"
+      >
+
+        <div className="form-group">
+
+          <label>
+            Venue Name
+          </label>
+
+          <input
+            type="text"
+            name="venueName"
+            value={
+              formData.venueName
+            }
+            onChange={
+              handleChange
+            }
+            required
+          />
+
+        </div>
+
+
+        <div className="form-group">
+
+          <label>
+            Description
+          </label>
+
+          <textarea
+            name="description"
+            value={
+              formData.description
+            }
+            onChange={
+              handleChange
+            }
+          />
+
+        </div>
+
+
+
+        <div className="form-group">
+
+          <label>
+            Search Venue Address
+          </label>
+
+          <AddressSearch
+            value={
+              formData.address
+            }
+            onAddressSelect={
+              handleAddressSelect
+            }
+          />
+
+        </div>
+
+
+        <div className="form-row">
+
+          <div className="form-group">
+
+            <label>
+              City
+            </label>
+
+            <input
+              type="text"
+              name="city"
+              value={
+                formData.city
+              }
+              onChange={
+                handleChange
+              }
+            />
+
+          </div>
+
+
+          <div className="form-group">
+
+            <label>
+              Total Capacity
+            </label>
+
+            <input
+              type="number"
+              name="capacity"
+              value={
+                formData.capacity
+              }
+              onChange={
+                handleChange
+              }
+            />
+
+          </div>
+
+        </div>
+
+
+        <div className="form-row">
+
+          <div className="form-group">
+
+            <label>
+              Number of Rows
+            </label>
+
+            <input
+              type="number"
+              name="numberOfRows"
+              value={
+                formData.numberOfRows
+              }
+              onChange={
+                handleChange
+              }
+            />
+
+          </div>
+
+
+          <div className="form-group">
+
+            <label>
+              Seats Per Row
+            </label>
+
+            <input
+              type="number"
+              name="seatsPerRow"
+              value={
+                formData.seatsPerRow
+              }
+              onChange={
+                handleChange
+              }
+            />
+
+          </div>
+
+        </div>
+
+
+        <div className="form-actions">
+
+          <button
+            type="submit"
+            className="btn-primary"
+          >
+
+            {editingId
+              ? "Update Venue"
+              : "Save Venue"}
+
+          </button>
+
+
+          {editingId && (
+
+            <button
+              type="button"
+              onClick={resetForm}
+              className="btn-secondary"
+            >
+
+              Cancel
+
+            </button>
+
+          )}
+
+        </div>
+
       </form>
 
-      <h2>Venues List</h2>
-      <ul>
-        {venues.map((venue) => (
-          <li key={venue._id}>
-            <strong>{venue.venueName}</strong> - {venue.address} ({venue.capacity} seats)
-            <button onClick={() => handleEdit(venue)}>Edit</button>
-            <button onClick={() => handleDelete(venue._id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+
+      <div
+        className="map-preview-container"
+        style={{
+          marginTop: "20px",
+        }}
+      >
+
+        <GoogleMap
+
+          latitude={
+            formData.latitude
+          }
+
+          longitude={
+            formData.longitude
+          }
+
+          venueName={
+            formData.venueName
+          }
+
+        />
+
+      </div>
+
+
+
+      <div
+        className="venues-list-container"
+        style={{
+          marginTop: "40px",
+        }}
+      >
+
+        <h3>
+          Registered Venues
+        </h3>
+
+
+        <table className="venues-table">
+
+          <thead>
+
+            <tr>
+
+              <th>Name</th>
+
+              <th>Address</th>
+
+              <th>City</th>
+
+              <th>Capacity</th>
+
+              <th>Actions</th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            {venues.map(
+              (venue) => (
+
+                <tr
+                  key={
+                    venue._id
+                  }
+                >
+
+                  <td>
+                    {venue.venueName ||
+                      venue.name}
+                  </td>
+
+                  <td>
+                    {venue.address}
+                  </td>
+
+                  <td>
+                    {venue.city}
+                  </td>
+
+                  <td>
+                    {venue.capacity}
+                  </td>
+
+                  <td>
+
+                    <button
+                      onClick={() =>
+                        handleEdit(
+                          venue
+                        )
+                      }
+                      className="btn-edit"
+                    >
+                      Edit
+                    </button>
+
+
+                    <button
+                      onClick={() =>
+                        handleDelete(
+                          venue._id
+                        )
+                      }
+                      className="btn-delete"
+                    >
+                      Delete
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              )
+            )}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
     </div>
   );
 }

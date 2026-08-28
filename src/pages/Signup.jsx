@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { app } from '../firebase';
+import { app } from '../firebase-front';
 import "./Signup.css"; 
 
 const auth = getAuth(app);
@@ -57,7 +57,6 @@ function Signup() {
 
             setConfirmPassword('');
             
-            // 4. Redirect to login view, passing the email forward in the navigation state
             navigate('/login', { state: { registeredEmail: email } }); 
             setEmail('');
         }

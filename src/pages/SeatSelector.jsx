@@ -50,10 +50,7 @@ function SeatSelection() {
     }
   }
 
-  // =========================
-  // SELECT / DESELECT SEAT
-  // =========================
-
+  
   function toggleSeat(seat) {
     if (seat.status === "Booked") {
       return;
@@ -76,9 +73,7 @@ function SeatSelection() {
     });
   }
 
-  // =========================
-  // CREATE BOOKING
-  // =========================
+
 
   async function handleBooking() {
     setError("");
@@ -125,21 +120,6 @@ function SeatSelection() {
         result
       );
 
-      /*
-       * Your backend may return:
-       *
-       * {
-       *   booking: {...}
-       * }
-       *
-       * or:
-       *
-       * {
-       *   _id: "...",
-       *   ...
-       * }
-       */
-
       const booking =
         result?.booking || result;
 
@@ -149,10 +129,7 @@ function SeatSelection() {
         );
       }
 
-      // =========================
-      // GO TO CONFIRMATION
-      // =========================
-
+      
       navigate(
         "/booking-confirmation",
         {
@@ -177,10 +154,6 @@ function SeatSelection() {
     }
   }
 
-  // =========================
-  // LOADING
-  // =========================
-
   if (loading) {
     return (
       <div className="page">
@@ -191,9 +164,6 @@ function SeatSelection() {
     );
   }
 
-  // =========================
-  // ERROR
-  // =========================
 
   if (error && !seatData) {
     return (
@@ -212,10 +182,7 @@ function SeatSelection() {
     );
   }
 
-  // =========================
-  // NO SEAT DATA
-  // =========================
-
+ 
   if (!seatData) {
     return (
       <div className="page">
@@ -239,14 +206,10 @@ function SeatSelection() {
     selectedSeats.length *
     ticketPrice;
 
-  // =========================
-  // PAGE
-  // =========================
-
+ 
   return (
     <div className="page">
 
-      {/* HEADER */}
 
       <div className="seat-header">
 
@@ -353,7 +316,6 @@ function SeatSelection() {
 
       </div>
 
-      {/* LEGEND */}
 
       <div className="seat-legend">
 
@@ -374,7 +336,6 @@ function SeatSelection() {
 
       </div>
 
-      {/* BOOKING SUMMARY */}
 
       {selectedSeats.length > 0 && (
 
@@ -434,7 +395,6 @@ function SeatSelection() {
 
       )}
 
-      {/* CREATE BOOKING */}
 
       <button
         type="button"

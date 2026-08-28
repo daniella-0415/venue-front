@@ -6,8 +6,6 @@ function BookingConfirmation() {
 
   const booking = location.state?.booking;
 
-  // If someone opens /booking-confirmation directly
-  // without completing a booking first
   if (!booking) {
     return <Navigate to="/events" replace />;
   }
@@ -29,10 +27,7 @@ function BookingConfirmation() {
     <div className="confirmation-page">
       <div className="confirmation-card">
 
-        {/* SUCCESS ICON */}
-        <div className="confirmation-icon">
-          ✓
-        </div>
+       
 
         <p className="confirmation-label">
           BOOKING CONFIRMED
@@ -46,7 +41,6 @@ function BookingConfirmation() {
           Your tickets have been successfully booked.
         </p>
 
-        {/* BOOKING REFERENCE */}
         <div className="booking-reference">
           <span>BOOKING REFERENCE</span>
 
@@ -56,7 +50,6 @@ function BookingConfirmation() {
           </strong>
         </div>
 
-        {/* EVENT */}
         <div className="confirmation-section">
 
           <h2>
@@ -71,7 +64,6 @@ function BookingConfirmation() {
 
         </div>
 
-        {/* DETAILS */}
         <div className="confirmation-details">
 
           <div className="detail-item">
@@ -108,7 +100,6 @@ function BookingConfirmation() {
 
         </div>
 
-        {/* SEATS */}
         <div className="seats-section">
 
           <span>YOUR SEATS</span>
@@ -123,7 +114,6 @@ function BookingConfirmation() {
 
         </div>
 
-        {/* TOTAL */}
         <div className="total-section">
 
           <span>Total Paid</span>
@@ -134,7 +124,6 @@ function BookingConfirmation() {
 
         </div>
 
-        {/* STATUS */}
         <div className="status">
 
           <span className="status-dot"></span>
@@ -143,7 +132,6 @@ function BookingConfirmation() {
 
         </div>
 
-        {/* ACTIONS */}
         <div className="confirmation-actions">
 
           <Link
