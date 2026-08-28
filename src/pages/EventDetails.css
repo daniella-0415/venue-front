@@ -2,18 +2,14 @@
   min-height: 100vh;
   background: #1c1917;
   color: white;
-
   padding: 30px 5% 70px;
 }
 
-/* BACK */
-
+/* BACK LINK */
 .back-link {
   display: inline-block;
-
   color: #ff6b00;
   text-decoration: none;
-
   font-weight: bold;
   margin-bottom: 30px;
 }
@@ -22,127 +18,94 @@
   color: #ff8a35;
 }
 
-/* CARD */
-
+/* THE CONTAINER CARD - Balanced 50/50 Grid Split */
 .event-details-card {
   max-width: 1200px;
   margin: auto;
-
   background: #0d0c0b;
-
   border: 1px solid #3b3835;
   border-radius: 15px;
-
   overflow: hidden;
-
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1fr 1fr; /* Exact equal width split */
 }
 
-/* IMAGE */
-
+/* LEFT SIDE: IMAGE PANEL */
 .details-image {
   position: relative;
-  min-height: 650px;
+  width: 100%;
+  height: 100%;
 }
 
 .details-image img {
   width: 100%;
   height: 100%;
-
-  object-fit: cover;
+  object-fit: cover; /* Keeps graphic perfectly scaled without distortion */
   display: block;
 }
 
 .details-image::after {
   content: "";
-
   position: absolute;
   inset: 0;
-
-  background:
-    linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.7),
-      transparent 45%
-    );
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent 45%);
 }
 
-/* TYPE */
-
+/* OVERLAY BADGE TYPE */
 .details-type {
   position: absolute;
-
   right: 25px;
   bottom: 25px;
-
   z-index: 2;
-
   background: #ff6b00;
-
   padding: 10px 18px;
-
   border-radius: 30px;
-
   font-weight: bold;
+  text-transform: capitalize;
 }
 
-/* CONTENT */
-
+/* RIGHT SIDE: INFORMATION COLUMN */
 .details-content {
-  padding: 55px 45px;
-
+  padding: 45px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between; /* Spreads components symmetrically top to bottom */
 }
 
 .details-label {
   color: #ff6b00;
-
   font-size: 13px;
   font-weight: bold;
-
   letter-spacing: 5px;
 }
 
 .details-content h1 {
-  font-size: 45px;
+  font-size: 40px; /* Sized down slightly to balance layout column space */
   line-height: 1.1;
-
-  margin: 10px 0 20px;
+  margin: 10px 0 15px;
 }
 
 .details-description {
   color: #aaa;
-
-  font-size: 17px;
-  line-height: 1.7;
-
-  margin-bottom: 35px;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 25px;
 }
 
-/* INFO */
-
+/* METADATA INFO CARDS */
 .details-info {
   display: grid;
   grid-template-columns: 1fr 1fr;
-
   gap: 15px;
 }
 
 .info-box {
   display: flex;
   align-items: center;
-
   gap: 14px;
-
   background: #171514;
-
   border: 1px solid #302d2a;
-
   border-radius: 8px;
-
   padding: 16px;
 }
 
@@ -152,20 +115,15 @@
 
 .info-box small {
   display: block;
-
   color: #777;
-
   font-size: 10px;
   font-weight: bold;
-
   letter-spacing: 1px;
-
   margin-bottom: 5px;
 }
 
 .info-box strong {
   display: block;
-
   font-size: 14px;
 }
 
@@ -174,20 +132,14 @@
   font-size: 18px !important;
 }
 
-/* LOCATION */
-
+/* LOCATION DETAILS */
 .location-box {
   margin-top: 20px;
-
   padding: 18px;
-
   display: flex;
   gap: 14px;
-
   background: #171514;
-
   border: 1px solid #302d2a;
-
   border-radius: 8px;
 }
 
@@ -205,49 +157,56 @@
   margin: 5px 0 0;
 }
 
-/* SELECT SEATS */
+/* LIVE LEAFLET MAP ELEMENT */
+.event-map-section {
+  margin-top: 20px;
+}
+
+.event-map-section .map-heading h2 {
+  font-size: 18px;
+  margin: 5px 0 10px;
+}
+
+.event-map-section .google-map-wrapper {
+  height: 200px; /* Constrained height keeps columns symmetrical */
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ACTION BUTTONS CONTEXT */
+.details-actions {
+  width: 100%;
+  margin-top: 25px;
+}
 
 .select-seats-button {
-  margin-top: 30px;
-
-  padding: 16px 22px;
-
-  background: #ff6b00;
+  display: block;
+  width: 100%;
+  text-align: center;
+  background-color: #ff6b00;
   color: white;
-
+  padding: 16px 22px;
   text-decoration: none;
-
-  border-radius: 7px;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
+  border-radius: 8px;
   font-weight: bold;
-
-  transition: 0.2s;
+  font-size: 16px;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
 .select-seats-button:hover {
-  background: #ff7d1a;
-  transform: translateY(-2px);
+  background-color: #e05e00;
+  transform: translateY(-1px);
 }
 
-/* ERROR */
-
+/* ERROR HANDLING VIEWS */
 .details-error {
   max-width: 600px;
-
   margin: 100px auto;
-
   padding: 40px;
-
   background: #0d0c0b;
-
   border: 1px solid #ff5555;
-
   border-radius: 12px;
-
   text-align: center;
 }
 
@@ -261,56 +220,42 @@
 
 .retry-button {
   margin-top: 20px;
-
   padding: 12px 30px;
-
   border: none;
   border-radius: 6px;
-
   background: #ff6b00;
   color: white;
-
   font-weight: bold;
-
   cursor: pointer;
 }
 
-/* RESPONSIVE */
-
-@media (max-width: 900px) {
-
+/* RESPONSIVE LAYOUT BREAKPOINTS */
+@media (max-width: 950px) {
   .event-details-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Switch to vertical stack layout configuration */
   }
-
   .details-image {
-    min-height: 400px;
+    height: 400px;
   }
-
   .details-content h1 {
     font-size: 36px;
   }
 }
 
 @media (max-width: 600px) {
-
   .event-details-page {
     padding: 20px 15px 50px;
   }
-
   .details-content {
-    padding: 35px 25px;
+    padding: 30px 20px;
   }
-
   .details-info {
     grid-template-columns: 1fr;
   }
-
   .details-image {
-    min-height: 300px;
+    height: 300px;
   }
-
   .details-content h1 {
-    font-size: 30px;
+    font-size: 28px;
   }
 }

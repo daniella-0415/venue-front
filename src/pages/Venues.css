@@ -1,0 +1,407 @@
+.venues-page {
+  min-height: 100vh;
+  padding: 40px 6%;
+  background: #171514;
+  color: #fff;
+}
+
+.venues-header {
+  margin-bottom: 30px;
+}
+
+.section-label {
+  margin: 0 0 8px;
+  color: #ff6b00;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.venues-header h1 {
+  margin: 0;
+  font-size: 38px;
+}
+
+.venues-header p:not(.section-label) {
+  color: #aaa;
+  margin-top: 10px;
+}
+
+/* MESSAGES */
+
+.venue-success,
+.venue-error {
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.venue-success {
+  background: rgba(46, 160, 67, 0.15);
+  border: 1px solid rgba(46, 160, 67, 0.5);
+  color: #7ee787;
+}
+
+.venue-error {
+  background: rgba(255, 70, 70, 0.12);
+  border: 1px solid rgba(255, 70, 70, 0.5);
+  color: #ff8585;
+}
+
+.venue-loading {
+  text-align: center;
+  padding: 80px;
+  color: #aaa;
+}
+
+/* FORM */
+
+.venue-form-card {
+  max-width: 1000px;
+  padding: 30px;
+  background: #0d0c0b;
+  border: 1px solid #35312f;
+  border-radius: 14px;
+  margin-bottom: 60px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #ddd;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 15px;
+  background: #171514;
+  color: #fff;
+  border: 1px solid #393532;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #ff6b00;
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+}
+
+.form-help {
+  display: block;
+  margin-top: 7px;
+  color: #777;
+  font-size: 12px;
+}
+
+/* GOOGLE AUTOCOMPLETE */
+
+.pac-container {
+  z-index: 9999 !important;
+  background: #171514;
+  border: 1px solid #3b3734;
+}
+
+.pac-item {
+  padding: 10px;
+  color: #ddd;
+  border-top: 1px solid #302d2a;
+}
+
+.pac-item:hover {
+  background: #282421;
+}
+
+.pac-item-query {
+  color: #fff;
+}
+
+/* COORDINATES */
+
+.coordinates-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 25px;
+  padding: 16px;
+  background: rgba(255, 107, 0, 0.08);
+  border: 1px solid rgba(255, 107, 0, 0.3);
+  border-radius: 8px;
+}
+
+.coordinates-box div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.coordinates-box span {
+  color: #888;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.coordinates-box strong {
+  color: #ff6b00;
+}
+
+/* MAP */
+
+.venue-map-preview {
+  overflow: hidden;
+  margin-bottom: 25px;
+  border: 1px solid #3a3633;
+  border-radius: 10px;
+}
+
+.map-preview-heading {
+  padding: 16px 18px;
+  background: #111;
+}
+
+.map-preview-heading span {
+  color: #ff6b00;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.map-preview-heading h3 {
+  margin: 5px 0 0;
+  font-size: 18px;
+}
+
+/* FORM ROW */
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+/* BUTTONS */
+
+.form-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.save-venue-button,
+.cancel-venue-button {
+  padding: 13px 25px;
+  border: none;
+  border-radius: 7px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.save-venue-button {
+  background: #ff6b00;
+  color: #fff;
+}
+
+.save-venue-button:hover {
+  background: #ff7b1a;
+}
+
+.cancel-venue-button {
+  background: #302c29;
+  color: #ddd;
+}
+
+.cancel-venue-button:hover {
+  background: #403b37;
+}
+
+/* VENUE LIST */
+
+.venues-list-section {
+  max-width: 1200px;
+}
+
+.list-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+.list-heading h2 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.list-heading > span {
+  color: #888;
+}
+
+/* GRID */
+
+.venues-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(300px, 1fr)
+  );
+  gap: 20px;
+}
+
+.venue-card {
+  background: #0d0c0b;
+  border: 1px solid #35312f;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: 0.2s ease;
+}
+
+.venue-card:hover {
+  border-color: #ff6b00;
+  transform: translateY(-2px);
+}
+
+.venue-card-content {
+  padding: 22px;
+}
+
+.venue-card-label {
+  margin: 0 0 7px;
+  color: #ff6b00;
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.venue-card h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.venue-description {
+  color: #999;
+  line-height: 1.5;
+}
+
+.venue-details {
+  border-top: 1px solid #302d2a;
+  margin-top: 18px;
+  padding-top: 15px;
+}
+
+.venue-details div {
+  margin-bottom: 12px;
+}
+
+.venue-details span {
+  display: block;
+  color: #777;
+  font-size: 10px;
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+}
+
+.venue-details strong {
+  color: #ddd;
+  font-size: 14px;
+}
+
+.location-status {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 7px 10px;
+  border-radius: 20px;
+  background: rgba(255, 107, 0, 0.1);
+  color: #ff6b00;
+  font-size: 12px;
+}
+
+.venue-card-actions {
+  display: flex;
+  gap: 10px;
+  padding: 15px 22px;
+  background: #121110;
+  border-top: 1px solid #302d2a;
+}
+
+.edit-button,
+.delete-button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.edit-button {
+  background: transparent;
+  color: #ff6b00;
+  border: 1px solid #ff6b00;
+}
+
+.edit-button:hover {
+  background: #ff6b00;
+  color: #fff;
+}
+
+.delete-button {
+  background: transparent;
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+}
+
+.delete-button:hover {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+.empty-venues {
+  padding: 50px;
+  text-align: center;
+  color: #777;
+  border: 1px dashed #393532;
+  border-radius: 10px;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+  .venues-page {
+    padding: 25px 18px;
+  }
+
+  .venues-header h1 {
+    font-size: 30px;
+  }
+
+  .venue-form-card {
+    padding: 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .coordinates-box {
+    grid-template-columns: 1fr;
+  }
+
+  .list-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
