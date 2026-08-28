@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { apiRequest } from "../services/api";
+import './Payments.css'
 
 function Payments() {
   const [searchParams] = useSearchParams();
