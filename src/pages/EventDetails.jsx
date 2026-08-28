@@ -104,7 +104,7 @@ function EventDetails() {
     <div className="event-details-page">
       {/* BACK LINK */}
       <Link to="/events" className="back-link">
-        ← Back to Events
+        Back to Events
       </Link>
 
       <div className="event-details-card">
