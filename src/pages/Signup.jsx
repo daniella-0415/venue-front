@@ -57,7 +57,6 @@ function Signup() {
 
             setConfirmPassword('');
             
-            // 4. Redirect to login view, passing the email forward in the navigation state
             navigate('/login', { state: { registeredEmail: email } }); 
             setEmail('');
         }
