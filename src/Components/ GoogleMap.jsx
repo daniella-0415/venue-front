@@ -1,41 +1,88 @@
-import { GeoapifyContext, GeoapifyGeocoderAutocomplete } from "@geoapify/react-geocoder-autocomplete";
-import "@geoapify/geocoder-autocomplete/styles/minimal.css"; 
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import "./GoogleMap.css";
 
-function AddressSearch({ value, onAddressSelect }) {
-  const apiKey = import.meta.env.VITE_GEOAPIFY_API_KEY;
+// Fix Leaflet marker icons when using Vite
+delete L.Icon.Default.prototype._getIconUrl;
 
-  const handlePlaceSelect = (value) => {
-    if (!value) return;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
 
-    const props = value.properties;
-    const addressName = props.formatted;
-    
-    const lng = value.geometry.coordinates[0];
-    const lat = value.geometry.coordinates[1];
-    
-    const city = props.city || props.county || props.state || "";
+  iconUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
 
-    onAddressSelect({
-      address: addressName,
-      city: city,
-      latitude: lat,
-      longitude: lng,
-      placeId: props.place_id || "",
-      name: props.name || props.street || "",
-    });
-  };
+  shadowUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
+
+function GoogleMap({
+  latitude,
+  longitude,
+  venueName,
+}) {
+  const lat = Number(latitude);
+  const lng = Number(longitude);
+
+  const hasCoordinates =
+    Number.isFinite(lat) &&
+    Number.isFinite(lng);
+
+  if (!hasCoordinates) {
+    return (
+      <div className="google-map-wrapper">
+        <div className="map-unavailable">
+          <span className="map-unavailable-icon">
+            📍
+          </span>
+
+          <h3>
+            Location unavailable
+          </h3>
+
+          <p>
+            The venue location has not been
+            provided yet.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <GeoapifyContext apiKey={apiKey}>
-      <GeoapifyGeocoderAutocomplete
-        placeholder="Search for venue address..."
-        value={value || ""}
-        type="amenity"
-        filterByCountryCode={["za"]} 
-        placeSelect={handlePlaceSelect}
-      />
-    </GeoapifyContext>
+    <div className="google-map-wrapper">
+
+      <MapContainer
+        center={[lat, lng]}
+        zoom={15}
+        scrollWheelZoom={false}
+        className="venue-map"
+      >
+
+        <TileLayer
+          attribution='&copy; OpenStreetMap contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+
+        <Marker position={[lat, lng]}>
+
+          <Popup>
+            <strong>
+              {venueName || "VenueFlow Venue"}
+            </strong>
+
+            <br />
+
+            Venue location
+          </Popup>
+
+        </Marker>
+
+      </MapContainer>
+
+    </div>
   );
 }
 
-export default AddressSearch;
+export default GoogleMap;

@@ -1,88 +1,366 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthContext";
+import { useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { getAuth, signOut } from "firebase/auth";
+import { app } from "../firebase-front";
 import "./Navbar.css";
 
-function Navbar() {
-  const { user, role } = useAuth();
-  const navigate = useNavigate();
+const auth = getAuth(app);
 
-  const handleLogout = () => {
-    // Firebase logout will be added here
+function Navbar() {
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const storedUser = localStorage.getItem("venueflowUser");
+
+  let user = null;
+
+  try {
+    user = storedUser ? JSON.parse(storedUser) : null;
+  } catch (error) {
+    console.error("Failed to read stored user:", error);
+  }
+
+  const role = user?.role || "Customer";
+
+  function closeMenu() {
+    setMenuOpen(false);
+  }
+
+  async function handleLogout() {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Firebase logout error:", error);
+    }
+
+    localStorage.removeItem("venueflowToken");
+    localStorage.removeItem("venueflowUser");
+
+    closeMenu();
     navigate("/login");
-  };
+  }
+
+  function getDashboardPath() {
+    if (
+      role === "Administrator" ||
+      role === "Admin"
+    ) {
+      return "/admin";
+    }
+
+    if (
+      role === "Venue Manager" ||
+      role === "Manager"
+    ) {
+      return "/manager";
+    }
+
+    return "/events";
+  }
+
+  function getRoleLabel() {
+    if (
+      role === "Administrator" ||
+      role === "Admin"
+    ) {
+      return "Administrator";
+    }
+
+    if (
+      role === "Venue Manager" ||
+      role === "Manager"
+    ) {
+      return "Venue Manager";
+    }
+
+    return "Customer";
+  }
 
   return (
     <nav className="navbar">
 
-      <Link to="/" className="logo">
-        Venue<span>Flow</span>
-      </Link>
+      <div className="navbar-container">
 
-      <div className="nav-links">
+        {/* LOGO */}
 
-        <Link to="/">Home</Link>
+        <Link
+          to={getDashboardPath()}
+          className="navbar-logo"
+          onClick={closeMenu}
+        >
+          <span className="navbar-logo-mark">
+            V
+          </span>
 
-        <Link to="/events">
-          Events
+          <span className="navbar-logo-text">
+            VenueFlow
+          </span>
         </Link>
 
-        <Link to="/venues">
-          Venues
-        </Link>
 
-        {user && role === "Customer" && (
-          <>
-            <Link to="/bookings">
-              My Bookings
-            </Link>
+        {/* DESKTOP NAVIGATION */}
 
-            <Link to="/booking-history">
-              Booking History
-            </Link>
+        <div className="navbar-links">
 
-            <Link to="/profile">
-              Profile
-            </Link>
-          </>
-        )}
+          {role === "Customer" && (
+            <>
+              <NavLink
+                to="/events"
+                className="navbar-link"
+              >
+                Events
+              </NavLink>
 
-        {user && role === "Manager" && (
-          <Link to="/manager-dashboard">
-            Manager Dashboard
-          </Link>
-        )}
+              <NavLink
+                to="/bookings"
+                className="navbar-link"
+              >
+                My Bookings
+              </NavLink>
+            </>
+          )}
 
-        {user && role === "Admin" && (
-          <Link to="/admin-dashboard">
-            Admin Dashboard
-          </Link>
-        )}
+
+          {(role === "Venue Manager" ||
+            role === "Manager") && (
+            <>
+              <NavLink
+                to="/manager"
+                className="navbar-link"
+              >
+                Dashboard
+              </NavLink>
+
+              <NavLink
+                to="/manager/venues"
+                className="navbar-link"
+              >
+                Venues
+              </NavLink>
+
+              <NavLink
+                to="/manager/events"
+                className="navbar-link"
+              >
+                Events
+              </NavLink>
+
+              <NavLink
+                to="/manager/bookings"
+                className="navbar-link"
+              >
+                Bookings
+              </NavLink>
+            </>
+          )}
+
+
+          {(role === "Administrator" ||
+            role === "Admin") && (
+            <>
+              <NavLink
+                to="/admin"
+                className="navbar-link"
+              >
+                Dashboard
+              </NavLink>
+
+              <NavLink
+                to="/admin/venues"
+                className="navbar-link"
+              >
+                Venues
+              </NavLink>
+            </>
+          )}
+
+        </div>
+
+
+        {/* USER AREA */}
+
+        <div className="navbar-user-area">
+
+          <div className="navbar-user">
+
+            <div className="navbar-avatar">
+              {(user?.name ||
+                user?.email ||
+                "U")
+                .charAt(0)
+                .toUpperCase()}
+            </div>
+
+            <div className="navbar-user-info">
+
+              <strong>
+                {user?.name ||
+                  user?.displayName ||
+                  "User"}
+              </strong>
+
+              <span>
+                {getRoleLabel()}
+              </span>
+
+            </div>
+
+          </div>
+
+          <button
+            className="navbar-logout"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+
+        </div>
+
+
+        {/* MOBILE MENU BUTTON */}
+
+        <button
+          className={`navbar-menu-button ${
+            menuOpen ? "open" : ""
+          }`}
+          onClick={() =>
+            setMenuOpen(!menuOpen)
+          }
+          aria-label="Toggle navigation"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
       </div>
 
-      <div className="nav-user">
 
-        {user ? (
-          <>
-            <span className="user-name">
-              {user.email}
-            </span>
+      {/* MOBILE NAVIGATION */}
+
+      {menuOpen && (
+        <div className="navbar-mobile-menu">
+
+          {role === "Customer" && (
+            <>
+              <NavLink
+                to="/events"
+                className="navbar-mobile-link"
+                onClick={closeMenu}
+              >
+                Events
+              </NavLink>
+
+              <NavLink
+                to="/bookings"
+                className="navbar-mobile-link"
+                onClick={closeMenu}
+              >
+                My Bookings
+              </NavLink>
+            </>
+          )}
+
+
+          {(role === "Venue Manager" ||
+            role === "Manager") && (
+            <>
+              <NavLink
+                to="/manager"
+                className="navbar-mobile-link"
+                onClick={closeMenu}
+              >
+                Dashboard
+              </NavLink>
+
+              <NavLink
+                to="/manager/venues"
+                className="navbar-mobile-link"
+                onClick={closeMenu}
+              >
+                Venues
+              </NavLink>
+
+              <NavLink
+                to="/manager/events"
+                className="navbar-mobile-link"
+                onClick={closeMenu}
+              >
+                Events
+              </NavLink>
+
+              <NavLink
+                to="/manager/bookings"
+                className="navbar-mobile-link"
+                onClick={closeMenu}
+              >
+                Bookings
+              </NavLink>
+            </>
+          )}
+
+
+          {(role === "Administrator" ||
+            role === "Admin") && (
+            <>
+              <NavLink
+                to="/admin"
+                className="navbar-mobile-link"
+                onClick={closeMenu}
+              >
+                Dashboard
+              </NavLink>
+
+              <NavLink
+                to="/admin/venues"
+                className="navbar-mobile-link"
+                onClick={closeMenu}
+              >
+                Venues
+              </NavLink>
+            </>
+          )}
+
+
+          <div className="navbar-mobile-user">
+
+            <div className="navbar-user">
+
+              <div className="navbar-avatar">
+                {(user?.name ||
+                  user?.email ||
+                  "U")
+                  .charAt(0)
+                  .toUpperCase()}
+              </div>
+
+              <div className="navbar-user-info">
+
+                <strong>
+                  {user?.name ||
+                    user?.displayName ||
+                    "User"}
+                </strong>
+
+                <span>
+                  {getRoleLabel()}
+                </span>
+
+              </div>
+
+            </div>
 
             <button
-              className="logout-btn"
+              className="navbar-logout mobile-logout"
               onClick={handleLogout}
             >
               Logout
             </button>
-          </>
-        ) : (
-          <Link to="/login" className="logout-btn">
-            Login
-          </Link>
-        )}
 
-      </div>
+          </div>
+
+        </div>
+      )}
 
     </nav>
   );

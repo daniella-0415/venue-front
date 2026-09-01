@@ -6,6 +6,34 @@ import GoogleMap from "../Components/ GoogleMap";
 
 const API_URL = "http://localhost:3000/api/venues";
 
+/*
+ * Get the currently logged-in VenueFlow user
+ * and prepare the headers required by the backend.
+ */
+function getAuthHeaders() {
+  const savedUser = localStorage.getItem("venueflowUser");
+
+  if (!savedUser) {
+    return {};
+  }
+
+  try {
+    const user = JSON.parse(savedUser);
+
+    return {
+      "x-user-id": user.id || user._id,
+      "x-user-role": user.role,
+    };
+  } catch (error) {
+    console.error(
+      "Could not read venueflowUser:",
+      error
+    );
+
+    return {};
+  }
+}
+
 function Venues() {
   const [venues, setVenues] = useState([]);
 
@@ -22,44 +50,83 @@ function Venues() {
     placeId: "",
   });
 
-  const [editingId, setEditingId] = useState(null);
+  const [editingId, setEditingId] =
+    useState(null);
 
-  const [message, setMessage] = useState("");
+  const [message, setMessage] =
+    useState("");
 
-  const [error, setError] = useState("");
+  const [error, setError] =
+    useState("");
 
+  const [loading, setLoading] =
+    useState(false);
+
+  const [loadingVenues, setLoadingVenues] =
+    useState(true);
+
+
+  /*
+   * ==========================================
+   * FETCH VENUES
+   * ==========================================
+   */
 
   const fetchVenues = async () => {
     try {
       setError("");
+      setLoadingVenues(true);
 
       const res = await fetch(API_URL);
 
       if (!res.ok) {
-        throw new Error("Failed to fetch venues");
+        throw new Error(
+          "Failed to fetch venues"
+        );
       }
 
       const data = await res.json();
 
-      setVenues(data);
+      setVenues(
+        Array.isArray(data)
+          ? data
+          : []
+      );
 
     } catch (err) {
-
       console.error(err);
 
-      setError(err.message);
+      setError(
+        err.message ||
+        "Failed to load venues."
+      );
+
+    } finally {
+      setLoadingVenues(false);
     }
   };
 
+
+  /*
+   * Load venues when page opens
+   */
 
   useEffect(() => {
     fetchVenues();
   }, []);
 
 
-  const handleChange = (e) => {
+  /*
+   * ==========================================
+   * FORM CHANGE
+   * ==========================================
+   */
 
-    const { name, value } = e.target;
+  const handleChange = (e) => {
+    const {
+      name,
+      value,
+    } = e.target;
 
     setFormData((previous) => ({
       ...previous,
@@ -68,8 +135,15 @@ function Venues() {
   };
 
 
+  /*
+   * ==========================================
+   * ADDRESS SELECT
+   * ==========================================
+   */
 
-  const handleAddressSelect = (locationData) => {
+  const handleAddressSelect = (
+    locationData
+  ) => {
 
     setFormData((previous) => ({
       ...previous,
@@ -95,7 +169,6 @@ function Venues() {
       locationData.latitude &&
       locationData.longitude
     ) {
-
       setError("");
 
       setMessage(
@@ -105,23 +178,30 @@ function Venues() {
   };
 
 
+  /*
+   * ==========================================
+   * CREATE / UPDATE VENUE
+   * ==========================================
+   */
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
     try {
-
       setError("");
-
       setMessage("");
+      setLoading(true);
 
+
+      /*
+       * Make sure the address was selected
+       * using AddressSearch.
+       */
 
       if (
         !formData.latitude ||
         !formData.longitude
       ) {
-
         setError(
           "Please search for and select the venue address."
         );
@@ -130,19 +210,84 @@ function Venues() {
       }
 
 
+      /*
+       * Validate city
+       */
+
+      if (!formData.city) {
+        setError(
+          "Please enter the venue city."
+        );
+
+        return;
+      }
+
+
+      /*
+       * Validate rows
+       */
+
+      if (
+        !formData.numberOfRows ||
+        Number(formData.numberOfRows) <= 0
+      ) {
+        setError(
+          "Please enter a valid number of rows."
+        );
+
+        return;
+      }
+
+
+      /*
+       * Validate seats
+       */
+
+      if (
+        !formData.seatsPerRow ||
+        Number(formData.seatsPerRow) <= 0
+      ) {
+        setError(
+          "Please enter a valid number of seats per row."
+        );
+
+        return;
+      }
+
+
+      /*
+       * Determine whether this is
+       * CREATE or UPDATE.
+       */
+
       const url = editingId
         ? `${API_URL}/${editingId}`
         : API_URL;
-
 
       const method = editingId
         ? "PUT"
         : "POST";
 
 
-      const body = {
+      /*
+       * IMPORTANT:
+       *
+       * The backend expects:
+       *
+       * name
+       * address
+       * city
+       * rows
+       * seatsPerRow
+       *
+       * NOT:
+       *
+       * venueName
+       * numberOfRows
+       */
 
-        venueName:
+      const body = {
+        name:
           formData.venueName,
 
         description:
@@ -154,25 +299,23 @@ function Venues() {
         city:
           formData.city,
 
-        capacity:
-          Number(formData.capacity),
-
-        numberOfRows:
-          Number(formData.numberOfRows),
+        rows:
+          Number(
+            formData.numberOfRows
+          ),
 
         seatsPerRow:
-          Number(formData.seatsPerRow),
-
-        latitude:
-          Number(formData.latitude),
-
-        longitude:
-          Number(formData.longitude),
-
-        placeId:
-          formData.placeId,
+          Number(
+            formData.seatsPerRow
+          ),
       };
 
+
+      /*
+       * Send authenticated request.
+       *
+       * This is the important fix.
+       */
 
       const res = await fetch(
         url,
@@ -182,6 +325,8 @@ function Venues() {
           headers: {
             "Content-Type":
               "application/json",
+
+            ...getAuthHeaders(),
           },
 
           body:
@@ -190,19 +335,31 @@ function Venues() {
       );
 
 
+      /*
+       * Try to read the response.
+       */
+
       const data =
         await res.json();
 
+
+      /*
+       * Backend returned an error.
+       */
 
       if (!res.ok) {
 
         throw new Error(
           data.message ||
           data.error ||
-          "Failed to save venue"
+          "Failed to save venue."
         );
       }
 
+
+      /*
+       * Success message.
+       */
 
       setMessage(
         editingId
@@ -211,19 +368,43 @@ function Venues() {
       );
 
 
+      /*
+       * Clear the form.
+       */
+
       resetForm();
 
-      fetchVenues();
 
+      /*
+       * Refresh venue list.
+       */
+
+      await fetchVenues();
 
     } catch (err) {
 
-      console.error(err);
+      console.error(
+        "Venue save error:",
+        err
+      );
 
-      setError(err.message);
+      setError(
+        err.message ||
+        "Failed to save venue."
+      );
+
+    } finally {
+
+      setLoading(false);
     }
   };
 
+
+  /*
+   * ==========================================
+   * EDIT VENUE
+   * ==========================================
+   */
 
   const handleEdit = (venue) => {
 
@@ -231,6 +412,11 @@ function Venues() {
       venue._id
     );
 
+
+    /*
+     * Support both possible formats
+     * for coordinates.
+     */
 
     const latitude =
       venue.latitude ??
@@ -286,9 +472,12 @@ function Venues() {
 
 
     setMessage("");
-
     setError("");
 
+
+    /*
+     * Scroll back to the form.
+     */
 
     window.scrollTo({
       top: 0,
@@ -297,8 +486,15 @@ function Venues() {
   };
 
 
+  /*
+   * ==========================================
+   * DELETE VENUE
+   * ==========================================
+   */
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (
+    id
+  ) => {
 
     const confirmed =
       window.confirm(
@@ -306,14 +502,16 @@ function Venues() {
       );
 
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
 
     try {
 
       setError("");
-
       setMessage("");
+      setLoading(true);
 
 
       const res =
@@ -321,6 +519,10 @@ function Venues() {
           `${API_URL}/${id}`,
           {
             method: "DELETE",
+
+            headers: {
+              ...getAuthHeaders(),
+            },
           }
         );
 
@@ -334,7 +536,7 @@ function Venues() {
         throw new Error(
           data.message ||
           data.error ||
-          "Failed to delete venue"
+          "Failed to delete venue."
         );
       }
 
@@ -344,18 +546,33 @@ function Venues() {
       );
 
 
-      fetchVenues();
+      await fetchVenues();
 
 
     } catch (err) {
 
-      console.error(err);
+      console.error(
+        "Venue delete error:",
+        err
+      );
 
-      setError(err.message);
+      setError(
+        err.message ||
+        "Failed to delete venue."
+      );
+
+    } finally {
+
+      setLoading(false);
     }
   };
 
 
+  /*
+   * ==========================================
+   * RESET FORM
+   * ==========================================
+   */
 
   const resetForm = () => {
 
@@ -383,8 +600,16 @@ function Venues() {
 
       placeId: "",
     });
+
+    setError("");
   };
 
+
+  /*
+   * ==========================================
+   * RENDER
+   * ==========================================
+   */
 
   return (
 
@@ -397,12 +622,16 @@ function Venues() {
       </h2>
 
 
+      {/* ERROR */}
+
       {error && (
         <div className="venue-error">
           {error}
         </div>
       )}
 
+
+      {/* SUCCESS */}
 
       {message && (
         <div className="venue-success">
@@ -411,10 +640,16 @@ function Venues() {
       )}
 
 
+      {/* ======================================
+          VENUE FORM
+      ====================================== */}
+
       <form
         onSubmit={handleSubmit}
         className="venue-form"
       >
+
+        {/* VENUE NAME */}
 
         <div className="form-group">
 
@@ -431,11 +666,15 @@ function Venues() {
             onChange={
               handleChange
             }
+            placeholder="Enter venue name"
             required
+            disabled={loading}
           />
 
         </div>
 
+
+        {/* DESCRIPTION */}
 
         <div className="form-group">
 
@@ -451,11 +690,14 @@ function Venues() {
             onChange={
               handleChange
             }
+            placeholder="Describe the venue"
+            disabled={loading}
           />
 
         </div>
 
 
+        {/* ADDRESS */}
 
         <div className="form-group">
 
@@ -475,6 +717,8 @@ function Venues() {
         </div>
 
 
+        {/* CITY + CAPACITY */}
+
         <div className="form-row">
 
           <div className="form-group">
@@ -492,6 +736,8 @@ function Venues() {
               onChange={
                 handleChange
               }
+              placeholder="Enter city"
+              disabled={loading}
             />
 
           </div>
@@ -512,12 +758,16 @@ function Venues() {
               onChange={
                 handleChange
               }
+              placeholder="Calculated from rows × seats"
+              disabled
             />
 
           </div>
 
         </div>
 
+
+        {/* ROWS + SEATS */}
 
         <div className="form-row">
 
@@ -536,6 +786,10 @@ function Venues() {
               onChange={
                 handleChange
               }
+              min="1"
+              placeholder="e.g. 20"
+              disabled={loading}
+              required
             />
 
           </div>
@@ -556,6 +810,10 @@ function Venues() {
               onChange={
                 handleChange
               }
+              min="1"
+              placeholder="e.g. 15"
+              disabled={loading}
+              required
             />
 
           </div>
@@ -563,16 +821,53 @@ function Venues() {
         </div>
 
 
+        {/* CAPACITY PREVIEW */}
+
+        {formData.numberOfRows &&
+          formData.seatsPerRow && (
+
+          <div
+            style={{
+              marginBottom: "20px",
+              padding: "12px 15px",
+              borderRadius: "8px",
+              background: "#2b1c11",
+              color: "#ff7900",
+              fontWeight: "700",
+            }}
+          >
+
+            Total capacity:{" "}
+
+            {Number(
+              formData.numberOfRows
+            ) *
+              Number(
+                formData.seatsPerRow
+              )}
+
+            {" "}seats
+
+          </div>
+
+        )}
+
+
+        {/* FORM BUTTONS */}
+
         <div className="form-actions">
 
           <button
             type="submit"
             className="btn-primary"
+            disabled={loading}
           >
 
-            {editingId
-              ? "Update Venue"
-              : "Save Venue"}
+            {loading
+              ? "Saving..."
+              : editingId
+                ? "Update Venue"
+                : "Save Venue"}
 
           </button>
 
@@ -583,6 +878,7 @@ function Venues() {
               type="button"
               onClick={resetForm}
               className="btn-secondary"
+              disabled={loading}
             >
 
               Cancel
@@ -595,6 +891,10 @@ function Venues() {
 
       </form>
 
+
+      {/* ======================================
+          MAP
+      ====================================== */}
 
       <div
         className="map-preview-container"
@@ -622,6 +922,9 @@ function Venues() {
       </div>
 
 
+      {/* ======================================
+          REGISTERED VENUES
+      ====================================== */}
 
       <div
         className="venues-list-container"
@@ -635,90 +938,147 @@ function Venues() {
         </h3>
 
 
-        <table className="venues-table">
+        {loadingVenues ? (
 
-          <thead>
+          <div
+            style={{
+              padding: "30px",
+              textAlign: "center",
+            }}
+          >
+            Loading venues...
+          </div>
 
-            <tr>
+        ) : venues.length === 0 ? (
 
-              <th>Name</th>
+          <div
+            style={{
+              padding: "30px",
+              textAlign: "center",
+            }}
+          >
+            No venues registered yet.
+          </div>
 
-              <th>Address</th>
+        ) : (
 
-              <th>City</th>
+          <div
+            style={{
+              overflowX: "auto",
+            }}
+          >
 
-              <th>Capacity</th>
+            <table className="venues-table">
 
-              <th>Actions</th>
+              <thead>
 
-            </tr>
+                <tr>
 
-          </thead>
+                  <th>
+                    Name
+                  </th>
 
+                  <th>
+                    Address
+                  </th>
 
-          <tbody>
+                  <th>
+                    City
+                  </th>
 
-            {venues.map(
-              (venue) => (
+                  <th>
+                    Capacity
+                  </th>
 
-                <tr
-                  key={
-                    venue._id
-                  }
-                >
-
-                  <td>
-                    {venue.venueName ||
-                      venue.name}
-                  </td>
-
-                  <td>
-                    {venue.address}
-                  </td>
-
-                  <td>
-                    {venue.city}
-                  </td>
-
-                  <td>
-                    {venue.capacity}
-                  </td>
-
-                  <td>
-
-                    <button
-                      onClick={() =>
-                        handleEdit(
-                          venue
-                        )
-                      }
-                      className="btn-edit"
-                    >
-                      Edit
-                    </button>
-
-
-                    <button
-                      onClick={() =>
-                        handleDelete(
-                          venue._id
-                        )
-                      }
-                      className="btn-delete"
-                    >
-                      Delete
-                    </button>
-
-                  </td>
+                  <th>
+                    Actions
+                  </th>
 
                 </tr>
 
-              )
-            )}
+              </thead>
 
-          </tbody>
 
-        </table>
+              <tbody>
+
+                {venues.map(
+                  (venue) => (
+
+                    <tr
+                      key={
+                        venue._id
+                      }
+                    >
+
+                      <td>
+                        {venue.venueName ||
+                          venue.name}
+                      </td>
+
+                      <td>
+                        {venue.address}
+                      </td>
+
+                      <td>
+                        {venue.city}
+                      </td>
+
+                      <td>
+                        {venue.capacity ??
+                          (
+                            Number(
+                              venue.rows || 0
+                            ) *
+                            Number(
+                              venue.seatsPerRow ||
+                              0
+                            )
+                          )}
+                      </td>
+
+                      <td>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleEdit(
+                              venue
+                            )
+                          }
+                          className="btn-edit"
+                          disabled={loading}
+                        >
+                          Edit
+                        </button>
+
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleDelete(
+                              venue._id
+                            )
+                          }
+                          className="btn-delete"
+                          disabled={loading}
+                        >
+                          Delete
+                        </button>
+
+                      </td>
+
+                    </tr>
+
+                  )
+                )}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        )}
 
       </div>
 
