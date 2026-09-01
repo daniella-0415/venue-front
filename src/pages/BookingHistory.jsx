@@ -186,10 +186,10 @@ function BookingHistory() {
 
                     <div>
                       <small>Time</small>
-
+{/* 
                       <strong>
                         {event?.startTime || "N/A"}
-                      </strong>
+                      </strong> */}
                     </div>
                   </div>
 
@@ -223,7 +223,6 @@ function BookingHistory() {
 
                 </div>
 
-                {/* BOTTOM */}
                 <div className="booking-bottom">
 
                   <div className="seat-info">
