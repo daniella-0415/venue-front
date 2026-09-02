@@ -1,161 +1,405 @@
 .manager-page {
   min-height: 100vh;
-  padding: 40px;
-  background: #f7f8fc;
+  background: #0d0d0d;
+  color: #f5f5f5;
+  padding: 50px;
 }
-
-/* =========================
-   HEADER
-========================= */
 
 .manager-header {
-  margin-bottom: 35px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
 }
 
-.page-label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 12px;
+.manager-label {
+  color: #ff7900;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #6b7280;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
 }
 
 .manager-header h1 {
+  font-family: Georgia, serif;
+  font-size: 42px;
   margin: 0;
-  font-size: 36px;
-  color: #111827;
 }
 
-.manager-header p {
-  margin-top: 10px;
-  color: #6b7280;
-  font-size: 16px;
+.manager-subtitle {
+  color: #aaa;
+  margin-top: 12px;
 }
 
-/* =========================
-   DASHBOARD CARDS
-========================= */
+.manager-refresh-button {
+  background: #ff7900;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
 
-.manager-cards {
+.manager-refresh-button:hover {
+  background: #ff8c1a;
+}
+
+.manager-stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 55px;
 }
 
-.manager-card {
-  display: block;
-  padding: 28px;
-  background: white;
-  border: 1px solid #e5e7eb;
+.manager-stat-card {
+  background: #151515;
+  border: 1px solid #2d2d2d;
   border-radius: 18px;
-  text-decoration: none;
-  color: inherit;
-  transition: 0.25s ease;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
 }
 
-.manager-card:hover {
-  transform: translateY(-5px);
-  border-color: #111827;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+.manager-stat-card.revenue-card {
+  border-color: #7a4000;
 }
 
-.manager-card-icon {
-  width: 52px;
-  height: 52px;
+.manager-stat-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 15px;
+  background: #2b1c11;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  border-radius: 14px;
-  background: #f1f3f7;
   font-size: 24px;
 }
 
-.manager-card h2 {
-  margin: 0 0 10px;
-  color: #111827;
-  font-size: 22px;
-}
-
-.manager-card p {
-  margin: 0 0 22px;
-  color: #6b7280;
-  line-height: 1.6;
-}
-
-.manager-card-link {
+.manager-stat-card span {
+  display: block;
+  color: #999;
   font-size: 14px;
-  font-weight: 700;
-  color: #111827;
+  margin-bottom: 6px;
 }
 
-/* =========================
-   QUICK ACTIONS
-========================= */
-
-.manager-actions {
-  margin-top: 45px;
+.manager-stat-card strong {
+  font-size: 27px;
 }
 
-.section-heading {
-  margin-bottom: 20px;
+.manager-section {
+  margin-bottom: 55px;
 }
 
-.section-heading h2 {
-  margin: 0;
-  font-size: 26px;
-  color: #111827;
-}
-
-.quick-actions {
+.manager-section-heading {
   display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 22px;
 }
 
-.quick-action {
+.manager-section-heading h2 {
+  font-family: Georgia, serif;
+  font-size: 28px;
+  margin: 0;
+}
+
+.manager-view-all {
+  color: #ff7900;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.manager-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.manager-action-card {
+  background: #151515;
+  border: 1px solid #2d2d2d;
+  border-radius: 18px;
+  padding: 25px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 16px 22px;
-  border-radius: 12px;
-  background: #111827;
+  gap: 18px;
   color: white;
   text-decoration: none;
-  font-weight: 600;
   transition: 0.2s ease;
 }
 
-.quick-action:hover {
-  transform: translateY(-2px);
-  opacity: 0.9;
+.manager-action-card:hover {
+  border-color: #ff7900;
+  transform: translateY(-3px);
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+.manager-action-icon {
+  min-width: 55px;
+  height: 55px;
+  border-radius: 15px;
+  background: #2b1c11;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
 
-@media (max-width: 900px) {
-  .manager-cards {
+.manager-action-card h3 {
+  margin: 0 0 8px;
+  font-family: Georgia, serif;
+}
+
+.manager-action-card p {
+  color: #999;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.manager-action-card > span {
+  margin-left: auto;
+  color: #ff7900;
+  font-size: 25px;
+}
+
+.manager-venue-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.manager-venue-card {
+  background: #151515;
+  border: 1px solid #2d2d2d;
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.venue-card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: #2b1c11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.venue-card-content h3 {
+  font-family: Georgia, serif;
+  margin: 0 0 8px;
+}
+
+.venue-card-content p {
+  color: #999;
+  font-size: 14px;
+  min-height: 40px;
+}
+
+.venue-card-meta {
+  border-top: 1px solid #292929;
+  padding-top: 15px;
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  color: #bbb;
+  font-size: 13px;
+}
+
+.manager-events-table-wrapper {
+  background: #151515;
+  border: 1px solid #2d2d2d;
+  border-radius: 18px;
+  overflow-x: auto;
+}
+
+.manager-events-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.manager-events-table th {
+  text-align: left;
+  color: #888;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 18px 22px;
+  border-bottom: 1px solid #292929;
+}
+
+.manager-events-table td {
+  padding: 20px 22px;
+  border-bottom: 1px solid #242424;
+  color: #aaa;
+}
+
+.manager-events-table tr:last-child td {
+  border-bottom: none;
+}
+
+.manager-events-table td strong {
+  color: white;
+}
+
+.manager-price {
+  color: #ff7900 !important;
+  font-weight: 700;
+}
+
+.manager-empty {
+  background: #151515;
+  border: 1px solid #2d2d2d;
+  border-radius: 18px;
+  padding: 50px;
+  text-align: center;
+}
+
+.manager-empty span {
+  font-size: 40px;
+}
+
+.manager-empty h3 {
+  font-family: Georgia, serif;
+  margin: 15px 0 8px;
+}
+
+.manager-empty p {
+  color: #888;
+}
+
+.manager-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.manager-summary-card {
+  background: #151515;
+  border: 1px solid #2d2d2d;
+  border-radius: 18px;
+  padding: 28px;
+}
+
+.manager-summary-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.manager-summary-header h3 {
+  font-family: Georgia, serif;
+  margin: 0;
+  font-size: 22px;
+}
+
+.manager-summary-header > span {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: #2b1c11;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ff7900;
+  font-weight: 700;
+}
+
+.manager-summary-number {
+  display: block;
+  font-size: 38px;
+  margin-top: 30px;
+  color: #ff7900;
+}
+
+.manager-summary-card > p {
+  color: #888;
+}
+
+.manager-loading,
+.manager-error {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.manager-error {
+  background: #151515;
+  border: 1px solid #422;
+  border-radius: 20px;
+  max-width: 700px;
+  margin: 50px auto;
+  padding: 60px;
+}
+
+.manager-error .error-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #321c18;
+  color: #ff6347;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.manager-error h2 {
+  font-family: Georgia, serif;
+}
+
+.manager-error p {
+  color: #999;
+}
+
+.manager-error button {
+  margin-top: 20px;
+  background: #ff7900;
+  color: white;
+  border: none;
+  padding: 13px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+@media (max-width: 1000px) {
+  .manager-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .manager-venue-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .manager-actions-grid {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 650px) {
   .manager-page {
-    padding: 24px 16px;
+    padding: 25px 15px;
+  }
+
+  .manager-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
   }
 
   .manager-header h1 {
-    font-size: 28px;
+    font-size: 32px;
   }
 
-  .quick-actions {
-    flex-direction: column;
-  }
-
-  .quick-action {
-    justify-content: center;
+  .manager-stats-grid,
+  .manager-venue-grid,
+  .manager-bottom-grid {
+    grid-template-columns: 1fr;
   }
 }

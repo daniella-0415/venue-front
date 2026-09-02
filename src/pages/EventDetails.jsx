@@ -19,7 +19,6 @@ function EventDetails() {
       setLoading(true);
       setError("");
 
-      // FIXED: Queries the specific event by ID instead of fetching the whole array
       const data = await apiRequest(`/api/events/${id}`);
 
       if (!data) {
@@ -102,25 +101,21 @@ function EventDetails() {
 
   return (
     <div className="event-details-page">
-      {/* BACK LINK */}
       <Link to="/events" className="back-link">
         Back to Events
       </Link>
 
       <div className="event-details-card">
-        {/* IMAGE CONTAINER */}
         <div className="details-image">
           <img src={getEventImage()} alt={event.title} />
-          <div className="details-type">🎵 {getEventType()}</div>
+          <div className="details-type">{getEventType()}</div>
         </div>
 
-        {/* CONTENT COLUMN */}
         <div className="details-content">
           <p className="details-label">EVENT</p>
           <h1>{event.title}</h1>
           <p className="details-description">{event.description}</p>
 
-          {/* INFORMATION GRID */}
           <div className="details-info">
             <div className="info-box">
               <span className="info-icon"></span>
@@ -155,7 +150,6 @@ function EventDetails() {
             </div>
           </div>
 
-          {/* LOCATION ADDR READOUT */}
           <div className="location-box">
             <span className="location-icon"></span>
             <div>
@@ -168,7 +162,6 @@ function EventDetails() {
             </div>
           </div>
 
-          {/* DYNAMIC MAP PANEL */}
           <div className="event-map-section">
             <div className="map-heading">
               <p>LOCATION</p>
@@ -182,7 +175,6 @@ function EventDetails() {
             />
           </div>
 
-          {/* ACTION BUTTON WRAPPER */}
           <div className="details-actions">
             <Link
               to={`/events/${event._id}/seats`}

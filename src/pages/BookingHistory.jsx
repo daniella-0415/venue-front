@@ -71,7 +71,6 @@ function BookingHistory() {
         </div>
       )}
 
-      {/* EMPTY */}
       {!error && bookings.length === 0 && (
         <div className="empty-bookings">
 
@@ -84,7 +83,7 @@ function BookingHistory() {
           </h2>
 
           <p>
-            You haven't booked any events yet.
+            You haven't booked any events yet
           </p>
 
           <Link
@@ -97,7 +96,6 @@ function BookingHistory() {
         </div>
       )}
 
-      {/* BOOKINGS */}
       <div className="booking-list">
 
         {bookings.map((booking) => {
@@ -186,10 +184,7 @@ function BookingHistory() {
 
                     <div>
                       <small>Time</small>
-{/* 
-                      <strong>
-                        {event?.startTime || "N/A"}
-                      </strong> */}
+
                     </div>
                   </div>
 

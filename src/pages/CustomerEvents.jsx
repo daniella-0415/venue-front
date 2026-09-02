@@ -76,12 +76,12 @@ const CustomerEvents = ({ onNavigate }) => {
   return (
     <div className="customer-events-page">
 
-      {/* HEADER */}
+
 
       <header className="customer-header">
 
         <div className="customer-logo">
-          Venue<span>Flow</span>
+          Venue<span>FlowThingy</span>
         </div>
 
         <nav>
@@ -107,8 +107,6 @@ const CustomerEvents = ({ onNavigate }) => {
         </nav>
 
       </header>
-
-      {/* CONTENT */}
 
       <main className="events-content">
 
@@ -144,7 +142,6 @@ const CustomerEvents = ({ onNavigate }) => {
                 key={event._id}
               >
 
-                {/* IMAGE */}
 
                 <div className="event-image">
 
@@ -161,7 +158,6 @@ const CustomerEvents = ({ onNavigate }) => {
 
                 </div>
 
-                {/* EVENT INFO */}
 
                 <div className="event-info">
 

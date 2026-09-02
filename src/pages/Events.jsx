@@ -155,7 +155,6 @@ function Events() {
               key={event._id}
             >
 
-              {/* IMAGE */}
               <div className="event-image">
 
                 <img
@@ -163,7 +162,6 @@ function Events() {
                   alt={event.title}
                 />
 
-                {/* DATE */}
                 <div className="date-badge">
 
                   <strong>
@@ -183,7 +181,6 @@ function Events() {
 
               </div>
 
-              {/* INFORMATION */}
               <div className="event-info">
 
                 <p className="event-date">
