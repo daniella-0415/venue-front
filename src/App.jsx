@@ -9,7 +9,7 @@ import EventDetails from "./pages/EventDetails.jsx";
 import SeatSelection from "./pages/SeatSelector.jsx";
 import BookingHistory from "./pages/BookingHistory.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
-import ManagerDashboard from "./pages/ManagerDashboard.jsx";
+import ManagerDashboard from "./pages/Manager.jsx";
 
 
 import Payments from "./pages/Payments";
