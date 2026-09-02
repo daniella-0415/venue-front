@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Venues.css";
 
 import AddressSearch from "../Components/AddressSearch";
-import GoogleMap from "../Components/ GoogleMap";
+import GoogleMap from "../Components/GoogleMap";
 
 const API_URL = "http://localhost:3000/api/venues";
 
