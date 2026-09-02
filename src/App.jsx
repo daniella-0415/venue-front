@@ -33,7 +33,6 @@ import AdminDashboard from "./pages/AdminDashboard.jsx";
 function AppContent() {
   const location = useLocation();
 
-  // Pages where Navbar and Footer should NOT appear
   const publicPages = [
     "/login",
     "/signup",
@@ -45,22 +44,16 @@ function AppContent() {
   return (
     <div className="app">
 
-      {/* GLOBAL NAVBAR */}
       {showLayout && <Navbar />}
 
 
-      {/* =====================================================
-          APPLICATION ROUTES
-      ====================================================== */}
+    
 
       <main className="app-main">
 
         <Routes>
 
-          {/* =====================================================
-              PUBLIC ROUTES
-          ====================================================== */}
-
+        
           <Route
             path="/login"
             element={<Login />}
@@ -70,11 +63,6 @@ function AppContent() {
             path="/signup"
             element={<Signup />}
           />
-
-
-          {/* =====================================================
-              CUSTOMER ROUTES
-          ====================================================== */}
 
           <Route
             element={
@@ -86,61 +74,35 @@ function AppContent() {
             }
           >
 
-            {/* Home */}
-
-            <Route
-              path="/"
-              element={
-                <Navigate
-                  to="/events"
-                  replace
-                />
-              }
-            />
-
-            {/* Events */}
-
             <Route
               path="/events"
               element={<Events />}
             />
-
-            {/* Event Details */}
 
             <Route
               path="/events/:id"
               element={<EventDetails />}
             />
 
-            {/* Seat Selection */}
-
             <Route
               path="/events/:id/seats"
               element={<SeatSelection />}
             />
-
-            {/* Booking History */}
 
             <Route
               path="/bookings"
               element={<BookingHistory />}
             />
 
-            {/* Booking Confirmation */}
-
             <Route
               path="/booking-confirmation"
               element={<BookingConfirmation />}
             />
 
-            {/* Payments */}
-
             <Route
               path="/payments"
               element={<Payments />}
             />
-
-            {/* Payment Result */}
 
             <Route
               path="/payment-result"
@@ -148,11 +110,6 @@ function AppContent() {
             />
 
           </Route>
-
-
-          {/* =====================================================
-              VENUE MANAGER ROUTES
-          ====================================================== */}
 
           <Route
             element={
@@ -165,28 +122,20 @@ function AppContent() {
             }
           >
 
-            {/* Manager Dashboard */}
-
             <Route
               path="/manager"
               element={<Manager />}
             />
-
-            {/* Manager Venues */}
 
             <Route
               path="/manager/venues"
               element={<Venues />}
             />
 
-            {/* Manager Events */}
-
             <Route
               path="/manager/events"
               element={<ManagerEvents />}
             />
-
-            {/* Manager Bookings */}
 
             <Route
               path="/manager/bookings"
@@ -195,10 +144,6 @@ function AppContent() {
 
           </Route>
 
-
-          {/* =====================================================
-              ADMINISTRATOR ROUTES
-          ====================================================== */}
 
           <Route
             element={
@@ -211,14 +156,10 @@ function AppContent() {
             }
           >
 
-            {/* Admin Dashboard */}
-
             <Route
               path="/admin"
               element={<AdminDashboard />}
             />
-
-            {/* Admin Venues */}
 
             <Route
               path="/admin/venues"
@@ -228,15 +169,23 @@ function AppContent() {
           </Route>
 
 
-          {/* =====================================================
-              FALLBACK
-          ====================================================== */}
+          <Route
+            path="/"
+            element={
+              <Navigate
+                to="/login"
+                replace
+              />
+            }
+          />
+
+
 
           <Route
             path="*"
             element={
               <Navigate
-                to="/events"
+                to="/login"
                 replace
               />
             }
@@ -246,8 +195,6 @@ function AppContent() {
 
       </main>
 
-
-      {/* GLOBAL FOOTER */}
       {showLayout && <Footer />}
 
     </div>

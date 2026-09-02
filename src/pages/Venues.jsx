@@ -1,1083 +1,821 @@
-import React, { useState, useEffect } from "react";
-import "./Venues.css";
-
+import { useEffect, useState } from "react";
 import AddressSearch from "../Components/AddressSearch";
-import GoogleMap from "../Components/ GoogleMap";
-
-const API_URL = "http://localhost:3000/api/venues";
-
-/*
- * Get the currently logged-in VenueFlow user
- * and prepare the headers required by the backend.
- */
-function getAuthHeaders() {
-  const savedUser = localStorage.getItem("venueflowUser");
-
-  if (!savedUser) {
-    return {};
-  }
-
-  try {
-    const user = JSON.parse(savedUser);
-
-    return {
-      "x-user-id": user.id || user._id,
-      "x-user-role": user.role,
-    };
-  } catch (error) {
-    console.error(
-      "Could not read venueflowUser:",
-      error
-    );
-
-    return {};
-  }
-}
+import { apiRequest } from "../services/api";
+import "./Venues.css";
 
 function Venues() {
   const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const [editingId, setEditingId] = useState(null);
 
   const [formData, setFormData] = useState({
-    venueName: "",
+    name: "",
     description: "",
     address: "",
     city: "",
-    capacity: "",
-    numberOfRows: "",
-    seatsPerRow: "",
     latitude: "",
     longitude: "",
-    placeId: "",
+    rows: "",
+    seatsPerRow: "",
   });
 
-  const [editingId, setEditingId] =
-    useState(null);
-
-  const [message, setMessage] =
-    useState("");
-
-  const [error, setError] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [loadingVenues, setLoadingVenues] =
-    useState(true);
-
-
-  /*
-   * ==========================================
-   * FETCH VENUES
-   * ==========================================
-   */
-
-  const fetchVenues = async () => {
-    try {
-      setError("");
-      setLoadingVenues(true);
-
-      const res = await fetch(API_URL);
-
-      if (!res.ok) {
-        throw new Error(
-          "Failed to fetch venues"
-        );
-      }
-
-      const data = await res.json();
-
-      setVenues(
-        Array.isArray(data)
-          ? data
-          : []
-      );
-
-    } catch (err) {
-      console.error(err);
-
-      setError(
-        err.message ||
-        "Failed to load venues."
-      );
-
-    } finally {
-      setLoadingVenues(false);
-    }
-  };
-
-
-  /*
-   * Load venues when page opens
-   */
-
   useEffect(() => {
-    fetchVenues();
+    loadVenues();
   }, []);
 
+  async function loadVenues() {
+    try {
+      setLoading(true);
+      setError("");
 
-  /*
-   * ==========================================
-   * FORM CHANGE
-   * ==========================================
-   */
+      const data = await apiRequest("/api/venues");
 
-  const handleChange = (e) => {
-    const {
-      name,
-      value,
-    } = e.target;
+      setVenues(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to load venues:", err);
+
+      setError(
+        err.message || "Failed to load venues."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleInputChange(event) {
+    const { name, value } = event.target;
 
     setFormData((previous) => ({
       ...previous,
       [name]: value,
     }));
-  };
+  }
 
-
-  /*
-   * ==========================================
-   * ADDRESS SELECT
-   * ==========================================
-   */
-
-  const handleAddressSelect = (
-    locationData
-  ) => {
+  function handleAddressSelect(addressData) {
+    if (!addressData) {
+      return;
+    }
 
     setFormData((previous) => ({
       ...previous,
 
       address:
-        locationData.address || "",
+        addressData.address ||
+        previous.address,
 
       city:
-        locationData.city || "",
+        addressData.city ||
+        previous.city,
 
       latitude:
-        locationData.latitude || "",
+        addressData.latitude !== undefined
+          ? addressData.latitude
+          : previous.latitude,
 
       longitude:
-        locationData.longitude || "",
-
-      placeId:
-        locationData.placeId || "",
+        addressData.longitude !== undefined
+          ? addressData.longitude
+          : previous.longitude,
     }));
+  }
 
-
-    if (
-      locationData.latitude &&
-      locationData.longitude
-    ) {
-      setError("");
-
-      setMessage(
-        "Address found successfully."
-      );
-    }
-  };
-
-
-  /*
-   * ==========================================
-   * CREATE / UPDATE VENUE
-   * ==========================================
-   */
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      setError("");
-      setMessage("");
-      setLoading(true);
-
-
-      /*
-       * Make sure the address was selected
-       * using AddressSearch.
-       */
-
-      if (
-        !formData.latitude ||
-        !formData.longitude
-      ) {
-        setError(
-          "Please search for and select the venue address."
-        );
-
-        return;
-      }
-
-
-      /*
-       * Validate city
-       */
-
-      if (!formData.city) {
-        setError(
-          "Please enter the venue city."
-        );
-
-        return;
-      }
-
-
-      /*
-       * Validate rows
-       */
-
-      if (
-        !formData.numberOfRows ||
-        Number(formData.numberOfRows) <= 0
-      ) {
-        setError(
-          "Please enter a valid number of rows."
-        );
-
-        return;
-      }
-
-
-      /*
-       * Validate seats
-       */
-
-      if (
-        !formData.seatsPerRow ||
-        Number(formData.seatsPerRow) <= 0
-      ) {
-        setError(
-          "Please enter a valid number of seats per row."
-        );
-
-        return;
-      }
-
-
-      /*
-       * Determine whether this is
-       * CREATE or UPDATE.
-       */
-
-      const url = editingId
-        ? `${API_URL}/${editingId}`
-        : API_URL;
-
-      const method = editingId
-        ? "PUT"
-        : "POST";
-
-
-      /*
-       * IMPORTANT:
-       *
-       * The backend expects:
-       *
-       * name
-       * address
-       * city
-       * rows
-       * seatsPerRow
-       *
-       * NOT:
-       *
-       * venueName
-       * numberOfRows
-       */
-
-      const body = {
-        name:
-          formData.venueName,
-
-        description:
-          formData.description,
-
-        address:
-          formData.address,
-
-        city:
-          formData.city,
-
-        rows:
-          Number(
-            formData.numberOfRows
-          ),
-
-        seatsPerRow:
-          Number(
-            formData.seatsPerRow
-          ),
-      };
-
-
-      /*
-       * Send authenticated request.
-       *
-       * This is the important fix.
-       */
-
-      const res = await fetch(
-        url,
-        {
-          method,
-
-          headers: {
-            "Content-Type":
-              "application/json",
-
-            ...getAuthHeaders(),
-          },
-
-          body:
-            JSON.stringify(body),
-        }
-      );
-
-
-      /*
-       * Try to read the response.
-       */
-
-      const data =
-        await res.json();
-
-
-      /*
-       * Backend returned an error.
-       */
-
-      if (!res.ok) {
-
-        throw new Error(
-          data.message ||
-          data.error ||
-          "Failed to save venue."
-        );
-      }
-
-
-      /*
-       * Success message.
-       */
-
-      setMessage(
-        editingId
-          ? "Venue updated successfully."
-          : "Venue created successfully."
-      );
-
-
-      /*
-       * Clear the form.
-       */
-
-      resetForm();
-
-
-      /*
-       * Refresh venue list.
-       */
-
-      await fetchVenues();
-
-    } catch (err) {
-
-      console.error(
-        "Venue save error:",
-        err
-      );
-
-      setError(
-        err.message ||
-        "Failed to save venue."
-      );
-
-    } finally {
-
-      setLoading(false);
-    }
-  };
-
-
-  /*
-   * ==========================================
-   * EDIT VENUE
-   * ==========================================
-   */
-
-  const handleEdit = (venue) => {
-
-    setEditingId(
-      venue._id
-    );
-
-
-    /*
-     * Support both possible formats
-     * for coordinates.
-     */
-
-    const latitude =
-      venue.latitude ??
-      venue.location?.latitude ??
-      "";
-
-    const longitude =
-      venue.longitude ??
-      venue.location?.longitude ??
-      "";
-
-
+  function resetForm() {
     setFormData({
-
-      venueName:
-        venue.venueName ||
-        venue.name ||
-        "",
-
-      description:
-        venue.description ||
-        "",
-
-      address:
-        venue.address ||
-        "",
-
-      city:
-        venue.city ||
-        "",
-
-      capacity:
-        venue.capacity ||
-        "",
-
-      numberOfRows:
-        venue.numberOfRows ||
-        venue.rows ||
-        "",
-
-      seatsPerRow:
-        venue.seatsPerRow ||
-        "",
-
-      latitude,
-
-      longitude,
-
-      placeId:
-        venue.placeId ||
-        "",
+      name: "",
+      description: "",
+      address: "",
+      city: "",
+      latitude: "",
+      longitude: "",
+      rows: "",
+      seatsPerRow: "",
     });
 
-
-    setMessage("");
+    setEditingId(null);
     setError("");
+    setSuccess("");
+  }
 
+  function startEdit(venue) {
+    setEditingId(venue._id);
 
-    /*
-     * Scroll back to the form.
-     */
+    setFormData({
+      name: venue.name || "",
+      description: venue.description || "",
+      address: venue.address || "",
+      city: venue.city || "",
+      latitude:
+        venue.latitude !== null &&
+        venue.latitude !== undefined
+          ? venue.latitude
+          : "",
+      longitude:
+        venue.longitude !== null &&
+        venue.longitude !== undefined
+          ? venue.longitude
+          : "",
+      rows: venue.rows || "",
+      seatsPerRow:
+        venue.seatsPerRow || "",
+    });
+
+    setError("");
+    setSuccess("");
 
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  };
+  }
 
+  async function handleSubmit(event) {
+    event.preventDefault();
 
-  /*
-   * ==========================================
-   * DELETE VENUE
-   * ==========================================
-   */
+    setError("");
+    setSuccess("");
 
-  const handleDelete = async (
-    id
-  ) => {
-
-    const confirmed =
-      window.confirm(
-        "Are you sure you want to delete this venue?"
-      );
-
-
-    if (!confirmed) {
+    if (!formData.name.trim()) {
+      setError("Venue name is required.");
       return;
     }
 
+    if (!formData.address.trim()) {
+      setError("Venue address is required.");
+      return;
+    }
+
+    if (!formData.city.trim()) {
+      setError("City is required.");
+      return;
+    }
+
+    const rows = Number(formData.rows);
+    const seatsPerRow = Number(
+      formData.seatsPerRow
+    );
+
+    if (
+      !Number.isInteger(rows) ||
+      rows < 1 ||
+      rows > 26
+    ) {
+      setError(
+        "Rows must be a whole number between 1 and 26."
+      );
+      return;
+    }
+
+    if (
+      !Number.isInteger(seatsPerRow) ||
+      seatsPerRow < 1
+    ) {
+      setError(
+        "Seats per row must be a positive whole number."
+      );
+      return;
+    }
+
+    let latitude = null;
+    let longitude = null;
+
+    if (
+      formData.latitude !== "" &&
+      formData.latitude !== null &&
+      formData.latitude !== undefined
+    ) {
+      latitude = Number(formData.latitude);
+    }
+
+    if (
+      formData.longitude !== "" &&
+      formData.longitude !== null &&
+      formData.longitude !== undefined
+    ) {
+      longitude = Number(formData.longitude);
+    }
+
+    if (
+      latitude !== null &&
+      (!Number.isFinite(latitude) ||
+        latitude < -90 ||
+        latitude > 90)
+    ) {
+      setError("Latitude is invalid.");
+      return;
+    }
+
+    if (
+      longitude !== null &&
+      (!Number.isFinite(longitude) ||
+        longitude < -180 ||
+        longitude > 180)
+    ) {
+      setError("Longitude is invalid.");
+      return;
+    }
+
+    const payload = {
+      name: formData.name.trim(),
+
+      description:
+        formData.description.trim(),
+
+      address:
+        formData.address.trim(),
+
+      city:
+        formData.city.trim(),
+
+      latitude,
+
+      longitude,
+
+      rows,
+
+      seatsPerRow,
+    };
 
     try {
+      setSaving(true);
 
-      setError("");
-      setMessage("");
-      setLoading(true);
+      let result;
 
-
-      const res =
-        await fetch(
-          `${API_URL}/${id}`,
+      if (editingId) {
+        result = await apiRequest(
+          `/api/venues/${editingId}`,
           {
-            method: "DELETE",
-
-            headers: {
-              ...getAuthHeaders(),
-            },
+            method: "PUT",
+            body: JSON.stringify(payload),
           }
         );
 
+        setSuccess(
+          "Venue updated successfully."
+        );
+      } else {
+        result = await apiRequest(
+          "/api/venues",
+          {
+            method: "POST",
+            body: JSON.stringify(payload),
+          }
+        );
 
-      const data =
-        await res.json();
-
-
-      if (!res.ok) {
-
-        throw new Error(
-          data.message ||
-          data.error ||
-          "Failed to delete venue."
+        setSuccess(
+          "Venue created successfully."
         );
       }
 
-
-      setMessage(
-        "Venue deleted successfully."
+      console.log(
+        "VENUE SAVED:",
+        result
       );
 
+      resetForm();
 
-      await fetchVenues();
+   
+      setSuccess(
+        editingId
+          ? "Venue updated successfully."
+          : "Venue created successfully."
+      );
 
-
+      await loadVenues();
     } catch (err) {
-
       console.error(
-        "Venue delete error:",
+        "Failed to save venue:",
         err
       );
 
       setError(
         err.message ||
-        "Failed to delete venue."
+          "Failed to save venue."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete(venueId) {
+    const confirmed =
+      window.confirm(
+        "Are you sure you want to delete this venue?"
       );
 
-    } finally {
-
-      setLoading(false);
+    if (!confirmed) {
+      return;
     }
-  };
 
+    try {
+      setError("");
+      setSuccess("");
 
-  /*
-   * ==========================================
-   * RESET FORM
-   * ==========================================
-   */
+      await apiRequest(
+        `/api/venues/${venueId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
-  const resetForm = () => {
+      setSuccess(
+        "Venue deleted successfully."
+      );
 
-    setEditingId(null);
+      await loadVenues();
+    } catch (err) {
+      console.error(
+        "Failed to delete venue:",
+        err
+      );
 
-    setFormData({
+      setError(
+        err.message ||
+          "Failed to delete venue."
+      );
+    }
+  }
 
-      venueName: "",
-
-      description: "",
-
-      address: "",
-
-      city: "",
-
-      capacity: "",
-
-      numberOfRows: "",
-
-      seatsPerRow: "",
-
-      latitude: "",
-
-      longitude: "",
-
-      placeId: "",
-    });
-
-    setError("");
-  };
-
-
-  /*
-   * ==========================================
-   * RENDER
-   * ==========================================
-   */
+  if (loading) {
+    return (
+      <div className="venues-page">
+        <div className="venues-loading">
+          Loading venues...
+        </div>
+      </div>
+    );
+  }
 
   return (
-
     <div className="venues-page">
 
-      <h2>
-        {editingId
-          ? "Edit Venue"
-          : "Create New Venue"}
-      </h2>
+      <div className="venues-header">
+        <div>
+          <p className="page-label">
+            VENUE MANAGEMENT
+          </p>
 
+          <h1>
+            {editingId
+              ? "Edit Venue"
+              : "Manage Venues"}
+          </h1>
 
-      {/* ERROR */}
+          <p>
+            Create and manage your event
+            venues and seating information.
+          </p>
+        </div>
+      </div>
 
       {error && (
-        <div className="venue-error">
+        <div className="venue-message venue-error">
           {error}
         </div>
       )}
 
-
-      {/* SUCCESS */}
-
-      {message && (
-        <div className="venue-success">
-          {message}
+      {success && (
+        <div className="venue-message venue-success">
+          {success}
         </div>
       )}
 
+      <div className="venue-form-card">
 
-      {/* ======================================
-          VENUE FORM
-      ====================================== */}
+        <div className="form-card-header">
+          <div>
+            <h2>
+              {editingId
+                ? "Edit Venue"
+                : "Add New Venue"}
+            </h2>
 
-      <form
-        onSubmit={handleSubmit}
-        className="venue-form"
-      >
-
-        {/* VENUE NAME */}
-
-        <div className="form-group">
-
-          <label>
-            Venue Name
-          </label>
-
-          <input
-            type="text"
-            name="venueName"
-            value={
-              formData.venueName
-            }
-            onChange={
-              handleChange
-            }
-            placeholder="Enter venue name"
-            required
-            disabled={loading}
-          />
-
+            <p>
+              Enter the venue details below.
+            </p>
+          </div>
         </div>
 
-
-        {/* DESCRIPTION */}
-
-        <div className="form-group">
-
-          <label>
-            Description
-          </label>
-
-          <textarea
-            name="description"
-            value={
-              formData.description
-            }
-            onChange={
-              handleChange
-            }
-            placeholder="Describe the venue"
-            disabled={loading}
-          />
-
-        </div>
-
-
-        {/* ADDRESS */}
-
-        <div className="form-group">
-
-          <label>
-            Search Venue Address
-          </label>
-
-          <AddressSearch
-            value={
-              formData.address
-            }
-            onAddressSelect={
-              handleAddressSelect
-            }
-          />
-
-        </div>
-
-
-        {/* CITY + CAPACITY */}
-
-        <div className="form-row">
+        <form
+          onSubmit={handleSubmit}
+          className="venue-form"
+        >
 
           <div className="form-group">
+            <label htmlFor="name">
+              Venue Name
+            </label>
 
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={handleInputChange}
+              placeholder="e.g. Johannesburg Arena"
+              required
+            />
+          </div>
+
+
+          <div className="form-group">
+            <label htmlFor="description">
+              Description
+            </label>
+
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              placeholder="Describe the venue..."
+              rows="4"
+            />
+          </div>
+
+
+          <div className="form-group">
             <label>
+              Venue Address
+            </label>
+
+            <AddressSearch
+              value={formData.address}
+              onAddressSelect={
+                handleAddressSelect
+              }
+            />
+
+            <small className="field-help">
+              Select an address from the
+              search suggestions so the venue
+              coordinates can be saved.
+            </small>
+          </div>
+
+
+          <div className="form-group">
+            <label htmlFor="city">
               City
             </label>
 
             <input
-              type="text"
+              id="city"
               name="city"
-              value={
-                formData.city
-              }
-              onChange={
-                handleChange
-              }
-              placeholder="Enter city"
-              disabled={loading}
-            />
-
-          </div>
-
-
-          <div className="form-group">
-
-            <label>
-              Total Capacity
-            </label>
-
-            <input
-              type="number"
-              name="capacity"
-              value={
-                formData.capacity
-              }
-              onChange={
-                handleChange
-              }
-              placeholder="Calculated from rows × seats"
-              disabled
-            />
-
-          </div>
-
-        </div>
-
-
-        {/* ROWS + SEATS */}
-
-        <div className="form-row">
-
-          <div className="form-group">
-
-            <label>
-              Number of Rows
-            </label>
-
-            <input
-              type="number"
-              name="numberOfRows"
-              value={
-                formData.numberOfRows
-              }
-              onChange={
-                handleChange
-              }
-              min="1"
-              placeholder="e.g. 20"
-              disabled={loading}
+              type="text"
+              value={formData.city}
+              onChange={handleInputChange}
+              placeholder="e.g. Johannesburg"
               required
             />
-
           </div>
 
 
-          <div className="form-group">
 
-            <label>
-              Seats Per Row
-            </label>
+          <div className="coordinates-section">
 
-            <input
-              type="number"
-              name="seatsPerRow"
-              value={
-                formData.seatsPerRow
-              }
-              onChange={
-                handleChange
-              }
-              min="1"
-              placeholder="e.g. 15"
-              disabled={loading}
-              required
-            />
+            <div className="coordinates-header">
+              <h3>
+                Location Coordinates
+              </h3>
 
-          </div>
+              <p>
+                These coordinates are
+                automatically filled when you
+                select an address.
+              </p>
+            </div>
 
-        </div>
+            <div className="coordinates-grid">
 
+              <div className="form-group">
+                <label htmlFor="latitude">
+                  Latitude
+                </label>
 
-        {/* CAPACITY PREVIEW */}
+                <input
+                  id="latitude"
+                  name="latitude"
+                  type="number"
+                  step="any"
+                  value={
+                    formData.latitude
+                  }
+                  onChange={
+                    handleInputChange
+                  }
+                  placeholder="-26.2041"
+                />
+              </div>
 
-        {formData.numberOfRows &&
-          formData.seatsPerRow && (
+              <div className="form-group">
+                <label htmlFor="longitude">
+                  Longitude
+                </label>
 
-          <div
-            style={{
-              marginBottom: "20px",
-              padding: "12px 15px",
-              borderRadius: "8px",
-              background: "#2b1c11",
-              color: "#ff7900",
-              fontWeight: "700",
-            }}
-          >
+                <input
+                  id="longitude"
+                  name="longitude"
+                  type="number"
+                  step="any"
+                  value={
+                    formData.longitude
+                  }
+                  onChange={
+                    handleInputChange
+                  }
+                  placeholder="28.0473"
+                />
+              </div>
 
-            Total capacity:{" "}
+            </div>
 
-            {Number(
-              formData.numberOfRows
-            ) *
-              Number(
-                formData.seatsPerRow
+            {formData.latitude !== "" &&
+              formData.longitude !== "" && (
+                <div className="coordinates-confirmed">
+                   Coordinates captured:
+                  {" "}
+                  {formData.latitude},
+                  {" "}
+                  {formData.longitude}
+                </div>
               )}
 
-            {" "}seats
+          </div>
+
+
+          <div className="seating-section">
+
+            <div className="seating-header">
+              <h3>
+                Seating Configuration
+              </h3>
+
+              <p>
+                Set the number of rows and
+                seats in each row.
+              </p>
+            </div>
+
+            <div className="seating-grid">
+
+              <div className="form-group">
+                <label htmlFor="rows">
+                  Number of Rows
+                </label>
+
+                <input
+                  id="rows"
+                  name="rows"
+                  type="number"
+                  min="1"
+                  max="26"
+                  value={formData.rows}
+                  onChange={
+                    handleInputChange
+                  }
+                  placeholder="10"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="seatsPerRow">
+                  Seats Per Row
+                </label>
+
+                <input
+                  id="seatsPerRow"
+                  name="seatsPerRow"
+                  type="number"
+                  min="1"
+                  value={
+                    formData.seatsPerRow
+                  }
+                  onChange={
+                    handleInputChange
+                  }
+                  placeholder="20"
+                  required
+                />
+              </div>
+
+            </div>
+
+            {formData.rows &&
+              formData.seatsPerRow && (
+                <div className="capacity-preview">
+                  Total Capacity:
+                  {" "}
+                  {Number(formData.rows) *
+                    Number(
+                      formData.seatsPerRow
+                    )}
+                  {" "}
+                  seats
+                </div>
+              )}
 
           </div>
 
-        )}
 
-
-        {/* FORM BUTTONS */}
-
-        <div className="form-actions">
-
-          <button
-            type="submit"
-            className="btn-primary"
-            disabled={loading}
-          >
-
-            {loading
-              ? "Saving..."
-              : editingId
-                ? "Update Venue"
-                : "Save Venue"}
-
-          </button>
-
-
-          {editingId && (
+          <div className="form-actions">
 
             <button
-              type="button"
-              onClick={resetForm}
-              className="btn-secondary"
-              disabled={loading}
+              type="submit"
+              className="primary-button"
+              disabled={saving}
             >
-
-              Cancel
-
+              {saving
+                ? "Saving..."
+                : editingId
+                ? "Update Venue"
+                : "Create Venue"}
             </button>
 
-          )}
+            {editingId && (
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={resetForm}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+            )}
 
-        </div>
+          </div>
 
-      </form>
-
-
-      {/* ======================================
-          MAP
-      ====================================== */}
-
-      <div
-        className="map-preview-container"
-        style={{
-          marginTop: "20px",
-        }}
-      >
-
-        <GoogleMap
-
-          latitude={
-            formData.latitude
-          }
-
-          longitude={
-            formData.longitude
-          }
-
-          venueName={
-            formData.venueName
-          }
-
-        />
+        </form>
 
       </div>
 
 
-      {/* ======================================
-          REGISTERED VENUES
-      ====================================== */}
 
-      <div
-        className="venues-list-container"
-        style={{
-          marginTop: "40px",
-        }}
-      >
+      <div className="venue-list-section">
 
-        <h3>
-          Registered Venues
-        </h3>
+        <div className="venue-list-header">
+          <div>
+            <p className="page-label">
+              YOUR VENUES
+            </p>
 
-
-        {loadingVenues ? (
-
-          <div
-            style={{
-              padding: "30px",
-              textAlign: "center",
-            }}
-          >
-            Loading venues...
+            <h2>
+              Venues
+            </h2>
           </div>
 
-        ) : venues.length === 0 ? (
-
-          <div
-            style={{
-              padding: "30px",
-              textAlign: "center",
-            }}
-          >
-            No venues registered yet.
+          <div className="venue-count">
+            {venues.length}
           </div>
+        </div>
 
+        {venues.length === 0 ? (
+          <div className="empty-venues">
+            <h3>
+              No venues yet
+            </h3>
+
+            <p>
+              Create your first venue using
+              the form above.
+            </p>
+          </div>
         ) : (
+          <div className="venues-grid">
 
-          <div
-            style={{
-              overflowX: "auto",
-            }}
-          >
+            {venues.map((venue) => (
+              <div
+                className="venue-card"
+                key={venue._id}
+              >
 
-            <table className="venues-table">
+                <div className="venue-card-top">
 
-              <thead>
+                  <div>
+                    <p className="venue-card-label">
+                      VENUE
+                    </p>
 
-                <tr>
+                    <h3>
+                      {venue.name}
+                    </h3>
+                  </div>
 
-                  <th>
-                    Name
-                  </th>
+                  <div className="venue-capacity">
+                    {venue.capacity || 0}
+                    {" "}
+                    seats
+                  </div>
 
-                  <th>
-                    Address
-                  </th>
+                </div>
 
-                  <th>
-                    City
-                  </th>
+                <p className="venue-description">
+                  {venue.description ||
+                    "No description provided."}
+                </p>
 
-                  <th>
-                    Capacity
-                  </th>
+                <div className="venue-details">
 
-                  <th>
-                    Actions
-                  </th>
+                  <div className="venue-detail">
+                   
+                    <div>
+                      <strong>
+                        Address
+                      </strong>
 
-                </tr>
-
-              </thead>
-
-
-              <tbody>
-
-                {venues.map(
-                  (venue) => (
-
-                    <tr
-                      key={
-                        venue._id
-                      }
-                    >
-
-                      <td>
-                        {venue.venueName ||
-                          venue.name}
-                      </td>
-
-                      <td>
+                      <p>
                         {venue.address}
-                      </td>
+                      </p>
 
-                      <td>
+                      <p>
                         {venue.city}
-                      </td>
+                      </p>
+                    </div>
+                  </div>
 
-                      <td>
-                        {venue.capacity ??
-                          (
-                            Number(
-                              venue.rows || 0
-                            ) *
-                            Number(
-                              venue.seatsPerRow ||
-                              0
-                            )
-                          )}
-                      </td>
+                  <div className="venue-detail">
+                  
 
-                      <td>
+                    <div>
+                      <strong>
+                        Seating
+                      </strong>
 
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleEdit(
-                              venue
-                            )
-                          }
-                          className="btn-edit"
-                          disabled={loading}
-                        >
-                          Edit
-                        </button>
+                      <p>
+                        {venue.rows} rows
+                        {" "}
+                        {venue.seatsPerRow}
+                        {" seats"}
+                      </p>
+                    </div>
+                  </div>
 
+                  <div className="venue-detail">
+                   
 
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleDelete(
-                              venue._id
-                            )
-                          }
-                          className="btn-delete"
-                          disabled={loading}
-                        >
-                          Delete
-                        </button>
+                    <div>
+                      <strong>
+                        Map Coordinates
+                      </strong>
 
-                      </td>
+                      {venue.latitude !==
+                        null &&
+                      venue.latitude !==
+                        undefined &&
+                      venue.longitude !==
+                        null &&
+                      venue.longitude !==
+                        undefined ? (
+                        <p>
+                          {venue.latitude},
+                          {" "}
+                          {venue.longitude}
+                        </p>
+                      ) : (
+                        <p className="missing-coordinates">
+                          Coordinates missing
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
-                    </tr>
+                </div>
 
-                  )
-                )}
+                <div className="venue-card-actions">
 
-              </tbody>
+                  <button
+                    type="button"
+                    className="edit-button"
+                    onClick={() =>
+                      startEdit(venue)
+                    }
+                  >
+                    Edit
+                  </button>
 
-            </table>
+                  <button
+                    type="button"
+                    className="delete-button"
+                    onClick={() =>
+                      handleDelete(
+                        venue._id
+                      )
+                    }
+                  >
+                    Delete
+                  </button>
+
+                </div>
+
+              </div>
+            ))}
 
           </div>
-
         )}
 
       </div>

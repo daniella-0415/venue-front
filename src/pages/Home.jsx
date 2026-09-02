@@ -5,14 +5,13 @@ function Home() {
   return (
     <div className="home-page">
 
-      {/* HERO */}
 
       <section className="home-hero">
 
         <div className="home-hero-content">
 
           <p className="home-label">
-            VENUEFLOW
+            VENUEFLOWTHINGY
           </p>
 
           <h1>
@@ -26,7 +25,7 @@ function Home() {
           <p className="home-description">
             Find amazing events, choose your seats,
             and book unforgettable experiences with
-            VenueFlow.
+            VenueFlowTHINGY
           </p>
 
           <div className="home-actions">
@@ -71,7 +70,7 @@ function Home() {
       </section>
 
 
-      {/* FEATURES */}
+    
 
       <section className="home-features">
 

@@ -205,7 +205,7 @@ function AdminDashboard() {
 
           <p>
             Please wait while we load
-            VenueFlow platform data.
+            VenueFlowThingy platform data.
           </p>
         </div>
       </div>
@@ -228,7 +228,7 @@ function AdminDashboard() {
           </h1>
 
           <p className="admin-subtitle">
-            Monitor VenueFlow and manage
+            Monitor VenueFlowThingy and manage
             platform users.
           </p>
         </div>
@@ -585,7 +585,7 @@ function AdminDashboard() {
 
             <p>
               There are currently no
-              bookings on VenueFlow.
+              bookings on VenueFlowThinngy
             </p>
 
           </div>
@@ -733,7 +733,7 @@ function AdminDashboard() {
               onClick={cancelEditing}
               disabled={saving}
             >
-              ×
+              
             </button>
 
             <p className="admin-label">

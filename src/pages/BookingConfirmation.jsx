@@ -3,9 +3,9 @@ import "./BookingConfirmation.css";
 
 function BookingConfirmation() {
   const location = useLocation();
-
   const booking = location.state?.booking;
 
+ 
   if (!booking) {
     return <Navigate to="/events" replace />;
   }
@@ -27,116 +27,102 @@ function BookingConfirmation() {
     <div className="confirmation-page">
       <div className="confirmation-card">
 
-       
+        {/* Header */}
+        <p className="confirmation-label">BOOKING CREATED</p>
 
-        <p className="confirmation-label">
-          BOOKING CONFIRMED
-        </p>
-
-        <h1>
-          Your booking is confirmed!
-        </h1>
+        <h1>Your booking has been created!</h1>
 
         <p className="confirmation-message">
-          Your tickets have been successfully booked.
+          Your seats have been successfully reserved,
+          Please proceed to payment to complete your booking.
         </p>
 
         <div className="booking-reference">
           <span>BOOKING REFERENCE</span>
 
           <strong>
-            {booking.bookingReference ||
-              booking._id}
+            {booking.bookingReference || booking._id}
           </strong>
         </div>
 
         <div className="confirmation-section">
-
-          <h2>
-            {event?.title || "Event"}
-          </h2>
+          <h2>{event?.title || "Event"}</h2>
 
           {event?.description && (
             <p className="event-description">
               {event.description}
             </p>
           )}
-
         </div>
 
         <div className="confirmation-details">
 
           <div className="detail-item">
             <span>DATE</span>
-
-            <strong>
-              {bookingDate}
-            </strong>
+            <strong>{bookingDate}</strong>
           </div>
 
           <div className="detail-item">
             <span>TIME</span>
-
-            <strong>
-              {event?.startTime || "N/A"}
-            </strong>
+            <strong>{event?.startTime || "N/A"}</strong>
           </div>
 
           <div className="detail-item">
             <span>VENUE</span>
-
-            <strong>
-              {venue?.name || "N/A"}
-            </strong>
+            <strong>{venue?.name || "N/A"}</strong>
           </div>
 
           <div className="detail-item">
             <span>LOCATION</span>
-
-            <strong>
-              {venue?.city || "N/A"}
-            </strong>
+            <strong>{venue?.city || "N/A"}</strong>
           </div>
 
         </div>
 
-        <div className="seats-section">
-
+        {/* Seats */}<div className="seats-section">
           <span>YOUR SEATS</span>
 
           <div className="confirmed-seats">
-            {booking.seats?.map((seat) => (
-              <span key={seat}>
-                {seat}
-              </span>
-            ))}
+            {booking.seats?.length > 0 ? (
+              booking.seats.map((seat) => (
+                <span key={seat}>{seat}</span>
+              ))
+            ) : (
+              <span>No seats found</span>
+            )}
           </div>
-
         </div>
 
+       
         <div className="total-section">
-
-          <span>Total Paid</span>
+          <span>Total</span>
 
           <strong>
             R{total.toFixed(2)}
           </strong>
-
         </div>
 
+       
         <div className="status">
-
           <span className="status-dot"></span>
 
-          {booking.status || "Confirmed"}
-
+          {booking.paymentStatus || "Payment Pending"}
         </div>
 
+        {/* Actions */}
         <div className="confirmation-actions">
+
+          {/* THIS IS THE IMPORTANT NEW BUTTON */}
+          <Link
+            to={`/payments?bookingId=${booking._id}`}
+            className="primary-button"
+          >
+            Proceed to Payment
+          </Link>
 
           <Link
             to="/bookings"
-            className="primary-button"
+            className="secondary-button"
           >
             View My Bookings
           </Link>

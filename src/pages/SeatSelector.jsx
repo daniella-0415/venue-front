@@ -249,7 +249,6 @@ function SeatSelection() {
 
       </div>
 
-      {/* ERROR */}
 
       {error && (
         <div className="error">
@@ -257,13 +256,11 @@ function SeatSelection() {
         </div>
       )}
 
-      {/* SCREEN */}
 
       <div className="screen">
         SCREEN
       </div>
 
-      {/* SEATS */}
 
       <div className="seat-grid">
 

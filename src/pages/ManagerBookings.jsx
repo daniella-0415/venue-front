@@ -21,16 +21,9 @@ function ManagerBookings() {
       setLoading(true);
       setError("");
 
-      // -----------------------------------------
-      // GET CURRENT MANAGER PROFILE
-      // -----------------------------------------
-
       const profileData = await apiRequest("/api/profile");
       setProfile(profileData);
 
-      // -----------------------------------------
-      // GET ALL VENUES
-      // -----------------------------------------
 
       const venuesData = await apiRequest("/api/venues");
 
@@ -38,9 +31,6 @@ function ManagerBookings() {
         ? venuesData
         : [];
 
-      // -----------------------------------------
-      // ONLY KEEP THIS MANAGER'S VENUES
-      // -----------------------------------------
 
       const managerVenues = allVenues.filter((venue) => {
         const managerId =
@@ -56,9 +46,6 @@ function ManagerBookings() {
 
       setVenues(managerVenues);
 
-      // -----------------------------------------
-      // GET ALL EVENTS
-      // -----------------------------------------
 
       const eventsData = await apiRequest("/api/events");
 
@@ -66,18 +53,12 @@ function ManagerBookings() {
         ? eventsData
         : [];
 
-      // -----------------------------------------
-      // GET MANAGER VENUE IDS
-      // -----------------------------------------
-
+     
       const managerVenueIds = managerVenues.map(
         (venue) => venue._id?.toString()
       );
 
-      // -----------------------------------------
-      // ONLY KEEP EVENTS AT MANAGER VENUES
-      // -----------------------------------------
-
+     
       const managerEvents = allEvents.filter((event) => {
         const venueId =
           typeof event.venueId === "object"
@@ -91,10 +72,7 @@ function ManagerBookings() {
 
       setEvents(managerEvents);
 
-      // -----------------------------------------
-      // GET BOOKINGS FOR EACH MANAGER EVENT
-      // -----------------------------------------
-
+    
       const bookingResponses = await Promise.all(
         managerEvents.map(async (event) => {
           try {
@@ -114,10 +92,7 @@ function ManagerBookings() {
         })
       );
 
-      // -----------------------------------------
-      // COMBINE BOOKINGS FROM ALL EVENTS
-      // -----------------------------------------
-
+     
       const managerBookings = bookingResponses
         .filter(Boolean)
         .flatMap((response) =>
@@ -143,10 +118,6 @@ function ManagerBookings() {
     }
   }
 
-  // -----------------------------------------
-  // HELPERS
-  // -----------------------------------------
-
   function getEventName(booking) {
     if (booking.eventId?.title) {
       return booking.eventId.title;
@@ -162,7 +133,6 @@ function ManagerBookings() {
   }
 
   function getCustomerName(booking) {
-    // Backend populates customerId
     if (booking.customerId?.name) {
       return booking.customerId.name;
     }
@@ -191,9 +161,6 @@ function ManagerBookings() {
     );
   }
 
-  // -----------------------------------------
-  // LOADING
-  // -----------------------------------------
 
   if (loading) {
     return (
@@ -209,10 +176,7 @@ function ManagerBookings() {
     );
   }
 
-  // -----------------------------------------
-  // ERROR
-  // -----------------------------------------
-
+  
   if (error) {
     return (
       <div className="manager-page">
@@ -239,10 +203,7 @@ function ManagerBookings() {
     );
   }
 
-  // -----------------------------------------
-  // PAGE
-  // -----------------------------------------
-
+ 
   const revenue = bookings.reduce(
     (total, booking) =>
       total + getBookingAmount(booking),
@@ -252,7 +213,6 @@ function ManagerBookings() {
   return (
     <div className="manager-page">
 
-      {/* HEADER */}
 
       <div className="manager-header">
 
@@ -276,12 +236,11 @@ function ManagerBookings() {
           className="manager-refresh-button"
           onClick={loadBookings}
         >
-          ↻ Refresh
+          Refresh
         </button>
 
       </div>
 
-      {/* STATS */}
 
       <div className="manager-stats-grid">
 
@@ -347,7 +306,6 @@ function ManagerBookings() {
 
       </div>
 
-      {/* BOOKINGS */}
 
       <section className="manager-section">
 
@@ -369,7 +327,7 @@ function ManagerBookings() {
             to="/manager"
             className="manager-view-all"
           >
-            ← Dashboard
+            Dashboard
           </Link>
 
         </div>

@@ -181,7 +181,7 @@ function Manager() {
           className="manager-refresh-button"
           onClick={loadManagerData}
         >
-          ↻ Refresh
+          Refresh
         </button>
       </div>
 
@@ -425,7 +425,6 @@ function Manager() {
       </section>
 
 
-      {/* EVENTS */}
 
       <section className="manager-section">
 

@@ -36,18 +36,15 @@ function ManagerEvents() {
       setLoading(true);
       setError("");
 
-      // Get logged-in manager
       const profileData = await apiRequest("/api/profile");
       setProfile(profileData);
 
-      // Get all venues
       const venuesData = await apiRequest("/api/venues");
 
       const allVenues = Array.isArray(venuesData)
         ? venuesData
         : [];
 
-      // Keep only this manager's venues
       const managerVenues = allVenues.filter((venue) => {
         const managerId =
           typeof venue.managerId === "object"
@@ -62,7 +59,6 @@ function ManagerEvents() {
 
       setVenues(managerVenues);
 
-      // Automatically select first venue
       if (managerVenues.length > 0) {
         setFormData((previous) => ({
           ...previous,
@@ -83,7 +79,6 @@ function ManagerEvents() {
         (venue) => venue._id?.toString()
       );
 
-      // Only events belonging to manager's venues
       const managerEvents = allEvents.filter((event) => {
         const venueId =
           typeof event.venueId === "object"
@@ -145,7 +140,6 @@ function ManagerEvents() {
     setError("");
     setMessage("");
 
-    // Basic validation
     if (!formData.title.trim()) {
       setError("Please enter an event title.");
       return;
@@ -178,7 +172,6 @@ function ManagerEvents() {
       return;
     }
 
-    // Sales closing date must be before event date
     if (
       new Date(formData.salesClosingDate) >=
       new Date(formData.date)
@@ -298,7 +291,6 @@ function ManagerEvents() {
   return (
     <div className="manager-page">
 
-      {/* HEADER */}
 
       <div className="manager-header">
 
@@ -335,8 +327,8 @@ function ManagerEvents() {
             className="manager-refresh-button"
             onClick={loadEvents}
             disabled={creating}
-          >
-            ↻ Refresh
+          >Refre
+             Refresh
           </button>
 
           <button
@@ -357,7 +349,6 @@ function ManagerEvents() {
       </div>
 
 
-      {/* MESSAGES */}
 
       {error && (
         <div
@@ -381,8 +372,6 @@ function ManagerEvents() {
         </div>
       )}
 
-
-      {/* CREATE EVENT FORM */}
 
       {showForm && (
 
@@ -409,7 +398,7 @@ function ManagerEvents() {
 
             <div className="manager-empty">
 
-              <span>🏟️</span>
+             
 
               <h3>
                 No venues available
@@ -425,7 +414,7 @@ function ManagerEvents() {
                 to="/manager/venues"
                 className="manager-view-all"
               >
-                Manage My Venues →
+                Manage My Venues 
               </Link>
 
             </div>
@@ -437,7 +426,6 @@ function ManagerEvents() {
               className="manager-summary-card"
             >
 
-              {/* TITLE */}
 
               <div className="form-group">
 
@@ -457,7 +445,6 @@ function ManagerEvents() {
               </div>
 
 
-              {/* DESCRIPTION */}
 
               <div className="form-group">
 
@@ -476,7 +463,6 @@ function ManagerEvents() {
               </div>
 
 
-              {/* VENUE */}
 
               <div className="form-group">
 
@@ -510,9 +496,6 @@ function ManagerEvents() {
                 </select>
 
               </div>
-
-
-              {/* DATE + TIME */}
 
               <div
                 className="form-row"
@@ -552,9 +535,6 @@ function ManagerEvents() {
                 </div>
 
               </div>
-
-
-              {/* SALES CLOSE + PRICE */}
 
               <div
                 className="form-row"
@@ -610,9 +590,6 @@ function ManagerEvents() {
 
               </div>
 
-
-              {/* IMAGE */}
-
               <div className="form-group">
 
                 <label>
@@ -639,7 +616,6 @@ function ManagerEvents() {
               </div>
 
 
-              {/* BUTTONS */}
 
               <div
                 className="form-actions"
@@ -681,15 +657,11 @@ function ManagerEvents() {
       )}
 
 
-      {/* SUMMARY */}
 
       <div className="manager-stats-grid">
 
         <div className="manager-stat-card">
 
-          <div className="manager-stat-icon">
-            🏟️
-          </div>
 
           <div>
 
@@ -708,9 +680,7 @@ function ManagerEvents() {
 
         <div className="manager-stat-card">
 
-          <div className="manager-stat-icon">
-            🎫
-          </div>
+          
 
           <div>
 
@@ -729,7 +699,6 @@ function ManagerEvents() {
       </div>
 
 
-      {/* EVENTS */}
 
       <section className="manager-section">
 
@@ -751,7 +720,7 @@ function ManagerEvents() {
             to="/manager"
             className="manager-view-all"
           >
-            ← Dashboard
+            Dashboard
           </Link>
 
         </div>
@@ -761,7 +730,7 @@ function ManagerEvents() {
 
           <div className="manager-empty">
 
-            <span>🎫</span>
+        
 
             <h3>
               No events found
