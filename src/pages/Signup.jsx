@@ -31,7 +31,7 @@ function Signup() {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const firebaseUser = userCredential.user;
 
-            const response = await fetch('http://localhost:3000/api/users/register', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/users/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,8 +53,7 @@ function Signup() {
             alert("Account registered and synchronized successfully!");
             
             setFullName('');
-            setPassword('');            setFullName('');
-
+            setPassword('');
             setConfirmPassword('');
             
             navigate('/login', { state: { registeredEmail: email } }); 

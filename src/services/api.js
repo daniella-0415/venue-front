@@ -1,6 +1,6 @@
 
 export async function apiRequest(endpoint, options = {}) {
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
   const url = `${baseUrl}${endpoint}`;
 
   const savedUserString = localStorage.getItem("venueflowUser");
