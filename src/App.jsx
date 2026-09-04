@@ -29,7 +29,6 @@ import Venues from "./pages/Venues.jsx";
 
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 
-
 function AppContent() {
   const location = useLocation();
 

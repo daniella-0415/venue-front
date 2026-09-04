@@ -26,10 +26,11 @@ function Manager() {
       setLoading(true);
       setError("");
 
+      // Load manager profile
       const profileData = await apiRequest("/api/profile");
-
       setProfile(profileData);
 
+      // Load venues
       const venuesData = await apiRequest("/api/venues");
 
       const allVenues = Array.isArray(venuesData)
@@ -50,6 +51,7 @@ function Manager() {
 
       setVenues(managerVenues);
 
+      // Load events
       const eventsData = await apiRequest("/api/events");
 
       const allEvents = Array.isArray(eventsData)
@@ -73,6 +75,7 @@ function Manager() {
 
       setEvents(managerEvents);
 
+      // Load venue performance
       const performanceData = await Promise.all(
         managerVenues.map((venue) =>
           apiRequest(
@@ -105,7 +108,6 @@ function Manager() {
       );
 
       setStats(totals);
-
     } catch (err) {
       console.error(
         "Manager dashboard error:",
@@ -114,7 +116,7 @@ function Manager() {
 
       setError(
         err.message ||
-        "Failed to load manager dashboard."
+          "Failed to load manager dashboard."
       );
     } finally {
       setLoading(false);
@@ -138,9 +140,7 @@ function Manager() {
         <div className="manager-error">
           <div className="error-icon">!</div>
 
-          <h2>
-            Unable to load dashboard
-          </h2>
+          <h2>Unable to load dashboard</h2>
 
           <p>{error}</p>
 
@@ -155,17 +155,14 @@ function Manager() {
   return (
     <div className="manager-page">
 
-
+      {/* Header */}
       <div className="manager-header">
         <div>
-
           <p className="manager-label">
             VENUE MANAGEMENT
           </p>
 
-          <h1>
-            Manager Dashboard
-          </h1>
+          <h1>Manager Dashboard</h1>
 
           <p className="manager-subtitle">
             Welcome back
@@ -174,7 +171,6 @@ function Manager() {
               : ""}.
             Manage your venues, events and bookings.
           </p>
-
         </div>
 
         <button
@@ -185,50 +181,31 @@ function Manager() {
         </button>
       </div>
 
-
-
+      {/* Statistics */}
       <div className="manager-stats-grid">
 
         <div className="manager-stat-card">
-
-          
-
           <div>
             <span>My Venues</span>
             <strong>{venues.length}</strong>
           </div>
-
         </div>
 
-
         <div className="manager-stat-card">
-
-          
-
           <div>
             <span>My Events</span>
             <strong>{events.length}</strong>
           </div>
-
         </div>
 
-
         <div className="manager-stat-card">
-
-         
-
           <div>
             <span>Total Bookings</span>
             <strong>{stats.bookings}</strong>
           </div>
-
         </div>
 
-
         <div className="manager-stat-card revenue-card">
-
-          
-
           <div>
             <span>Revenue</span>
 
@@ -236,29 +213,21 @@ function Manager() {
               R{stats.revenue.toLocaleString("en-ZA")}
             </strong>
           </div>
-
         </div>
 
       </div>
 
-
-
+      {/* Quick Actions */}
       <section className="manager-section">
-
         <div className="manager-section-heading">
           <div>
-
             <p className="manager-label">
               QUICK ACTIONS
             </p>
 
-            <h2>
-              Manage Your Platform
-            </h2>
-
+            <h2>Manage Your Platform</h2>
           </div>
         </div>
-
 
         <div className="manager-actions-grid">
 
@@ -266,132 +235,85 @@ function Manager() {
             to="/manager/venues"
             className="manager-action-card"
           >
-
-            
-
             <div>
-
-              <h3>
-                My Venues
-              </h3>
+              <h3>My Venues</h3>
 
               <p>
                 View and manage your assigned venues.
               </p>
-
             </div>
 
             <span>→</span>
-
           </Link>
-
 
           <Link
             to="/manager/events"
             className="manager-action-card"
           >
-
-           
-
             <div>
-
-              <h3>
-                My Events
-              </h3>
+              <h3>My Events</h3>
 
               <p>
                 Create and manage events at your venues.
               </p>
-
             </div>
 
             <span>→</span>
-
           </Link>
-
 
           <Link
             to="/manager/bookings"
             className="manager-action-card"
           >
-
-
             <div>
-
-              <h3>
-                Bookings
-              </h3>
+              <h3>Bookings</h3>
 
               <p>
                 View bookings for your events.
               </p>
-
             </div>
 
+            <span>→</span>
           </Link>
 
         </div>
-
       </section>
 
-
-
+      {/* Venues */}
       <section className="manager-section">
-
         <div className="manager-section-heading">
-
           <div>
-
             <p className="manager-label">
               VENUES
             </p>
 
-            <h2>
-              My Venues
-            </h2>
-
+            <h2>My Venues</h2>
           </div>
 
           <Link
             to="/manager/venues"
             className="manager-view-all"
           >
-            View All 
+            View All
           </Link>
-
         </div>
 
-
         {venues.length === 0 ? (
-
           <div className="manager-empty">
-
-
-            <h3>
-              No venues found
-            </h3>
+            <h3>No venues found</h3>
 
             <p>
               You don't have any assigned venues yet.
             </p>
-
           </div>
-
         ) : (
-
           <div className="manager-venue-grid">
-
             {venues.slice(0, 4).map((venue) => (
-
               <div
                 className="manager-venue-card"
                 key={venue._id}
               >
-
-               
-
                 <div className="venue-card-content">
-
                   <h3>
                     {venue.venueName || venue.name}
                   </h3>
@@ -401,7 +323,6 @@ function Manager() {
                   </p>
 
                   <div className="venue-card-meta">
-
                     <span>
                       {venue.city || "Unknown city"}
                     </span>
@@ -409,71 +330,44 @@ function Manager() {
                     <span>
                       {venue.capacity || 0} seats
                     </span>
-
                   </div>
-
                 </div>
-
               </div>
-
             ))}
-
           </div>
-
         )}
-
       </section>
 
-
-
+      {/* Events */}
       <section className="manager-section">
-
         <div className="manager-section-heading">
-
           <div>
-
             <p className="manager-label">
               EVENTS
             </p>
 
-            <h2>
-              My Events
-            </h2>
-
+            <h2>My Events</h2>
           </div>
 
           <Link
             to="/manager/events"
             className="manager-view-all"
           >
-            View All 
+            View All
           </Link>
-
         </div>
 
-
         {events.length === 0 ? (
-
           <div className="manager-empty">
-
-           
-
-            <h3>
-              No events found
-            </h3>
+            <h3>No events found</h3>
 
             <p>
               Create your first event to get started.
             </p>
-
           </div>
-
         ) : (
-
           <div className="manager-events-table-wrapper">
-
             <table className="manager-events-table">
-
               <thead>
                 <tr>
                   <th>EVENT</th>
@@ -484,11 +378,8 @@ function Manager() {
               </thead>
 
               <tbody>
-
                 {events.slice(0, 8).map((event) => (
-
                   <tr key={event._id}>
-
                     <td>
                       <strong>
                         {event.title}
@@ -515,43 +406,26 @@ function Manager() {
                         event.ticketPrice || 0
                       ).toFixed(2)}
                     </td>
-
                   </tr>
-
                 ))}
-
               </tbody>
-
             </table>
-
           </div>
-
         )}
-
       </section>
 
-
-
+      {/* Bottom Summary */}
       <section className="manager-bottom-grid">
 
         <div className="manager-summary-card">
-
           <div className="manager-summary-header">
-
             <div>
-
               <p className="manager-label">
                 BOOKINGS
               </p>
 
-              <h3>
-                Tickets Sold
-              </h3>
-
+              <h3>Tickets Sold</h3>
             </div>
-
-           
-
           </div>
 
           <strong className="manager-summary-number">
@@ -561,30 +435,19 @@ function Manager() {
           <p>
             Tickets associated with your events.
           </p>
-
         </div>
 
-
         <div className="manager-summary-card">
-
           <div className="manager-summary-header">
-
             <div>
-
               <p className="manager-label">
                 REVENUE
               </p>
 
-              <h3>
-                Booking Revenue
-              </h3>
-
+              <h3>Booking Revenue</h3>
             </div>
 
-            <span>
-              R
-            </span>
-
+            <span>R</span>
           </div>
 
           <strong className="manager-summary-number">
@@ -594,7 +457,6 @@ function Manager() {
           <p>
             Revenue from bookings for your venues.
           </p>
-
         </div>
 
       </section>

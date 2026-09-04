@@ -1,6 +1,6 @@
 
 export async function apiRequest(endpoint, options = {}) {
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
   const url = `${baseUrl}${endpoint}`;
 
   const savedUserString = localStorage.getItem("venueflowUser");
@@ -16,8 +16,12 @@ export async function apiRequest(endpoint, options = {}) {
     ...options.headers,
   };
 
-  const targetUserId = savedUser?._id || savedUser?.id || "6a7dc3cf148c1fc759ea3c3f"; 
-  const targetUserRole = savedUser?.role || "Customer";
+  const targetUserId = savedUser?._id || savedUser?.id;
+const targetUserRole = savedUser?.role;
+
+if (!targetUserId) {
+  console.error("No user found in localStorage! You need to log in again.");
+}
 
   headers["x-user-id"] = targetUserId;
   headers["x-user-role"] = targetUserRole;

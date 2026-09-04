@@ -327,7 +327,7 @@ function ManagerEvents() {
             className="manager-refresh-button"
             onClick={loadEvents}
             disabled={creating}
-          >Refre
+          >
              Refresh
           </button>
 

@@ -18,9 +18,14 @@ export function AuthProvider({ children }) {
 
         try {
           const data = await apiRequest(`/api/users/${firebaseUser.uid}`);
-          setRole(data?.role || "Customer");
+          const userRole = data?.role || "Customer";
+          setRole(userRole);
           
-          localStorage.setItem("venueflowUser", JSON.stringify(data || firebaseUser));
+          localStorage.setItem("venueflowUser", JSON.stringify(data));
+          if (data?._id) {
+            localStorage.setItem("venueflowUserId", data._id);
+          }
+          localStorage.setItem("venueflowRole", userRole);
         } catch (error) {
           console.error("Failed to fetch user role from backend, checking storage fallback:", error);
           const savedUser = localStorage.getItem("venueflowUser");
@@ -39,6 +44,8 @@ export function AuthProvider({ children }) {
         setUser(null);
         setRole(null);
         localStorage.removeItem("venueflowUser");
+        localStorage.removeItem("venueflowUserId");
+        localStorage.removeItem("venueflowRole");
         localStorage.removeItem("venueflowToken");
       }
       setLoading(false);
@@ -52,6 +59,8 @@ export function AuthProvider({ children }) {
     setUser(null);
     setRole(null);
     localStorage.removeItem("venueflowUser");
+    localStorage.removeItem("venueflowUserId");
+    localStorage.removeItem("venueflowRole");
     localStorage.removeItem("venueflowToken");
   };
 
